@@ -1,0 +1,49 @@
+
+3) system("$bindir/blastpgp -a 4 -b 0 -v 2000 -j 3 -h 0.001 -e 0.001 -d $maindir/data/blast/unifilt -i $tempdir/$jobid.fasta -C $tempdir/$jobid.chk > $tempdir/$jobid.blast")
+* -b : number of alignmets to show
+* -v : Number of database sequences to show one-line descriptions for
+* -j : iterations
+-h : e-value threshold for inclusion in multipass model
+* -e : e-value
+
+-query
+-out_pssm
+-db
+-out
+-evalue 0.001
+-num_descriptions 2000
+-num_alignments 0
+-num_threads 4
+-num_iterations 3
+-inclusion_ethresh 0.001
+
+4) system("$bindir/makemat -P $tempdir/$jobid > /dev/null")
+5) system("$hhblits/hhblits -i $tempdir/$jobid.fasta -n 3 -e 0.001 -d $maindir/data/hhsuite/uniprot20_2013_03 -cpu 4 -oa3m $tempdir/$jobid.a3m -diff inf -cov 80 -id 99 > $tempdir/$jobid.hhblog
+
+6) grep -v '^>' $tempdir/$jobid.a3m | sed 's/[a-z]//g' > $tempdir/$jobid.hhbaln
+7) $naln_hhblits = `cat $tempdir/$jobid.hhbaln | wc -l`;
+8) system("$bindir/jack_hhblits $jobid $bindir $tempdir $maindir/data/blast/uniref100 > $tempdir/$jobid.jacklog"
+9) $naln_jack = `cat $tempdir/$jobid.jackaln | wc -l`;
+10) Pick most hit?
+if ($naln_jack > $naln_hhblits)
+{
+    system("/bin/cp -f $tempdir/$jobid.jackaln $tempdir/$jobid.aln")
+}
+else
+{
+    system("/bin/cp -f $tempdir/$jobid.hhbaln $tempdir/$jobid.aln")
+}
+11) PSIPRED components
+(system("$bindir/psipred $tempdir/$jobid.mtx $maindir/data/psipred/weights.dat $maindir/data/psipred/weights.dat2 $maindir/data/psipred/weights.dat3 > $tempdir/$jobid.ss"
+"$bindir/psipass2 $maindir/data/psipred/weights_p2.dat 1 1.0 1.0 $tempdir/$jobid.ss2 $tempdir/$jobid.ss > /dev/null"
+12)
+$bindir/solvpred $tempdir/$jobid.mtx $maindir/data/weights_solv.dat > $tempdir/$jobid.solv
+$bindir/alnstats $tempdir/$jobid.aln $tempdir/$jobid.colstats $tempdir/$jobid.pairstats > /dev/null
+13) PSICOV components
+system("timeout 86400 $bindir/psicov -z 6 -o -d 0.03 $tempdir/$jobid.aln > $tempdir/$jobid.psicov 2>&1")
+14) gremlin - Baker lab http://gremlin.bakerlab.org/gremlin_faq.php via CCMPred Soeding lab
+system("timeout 86400 $bindir/run_gremlin.sh $maindir/MATLAB/MATLAB_Compiler_Runtime/v81 $tempdir/$jobid.aln $tempdir/$jobid.gremlin > /dev/null 2>&1
+15) freecontact https://rostlab.org/owiki/index.php/FreeContact
+system("$bindir/freecontact -a 8 < $tempdir/$jobid.aln > $tempdir/$jobid.evfold")
+16) Integrate predictions
+$bindir/nnpsicov2 $tempdir/$jobid.colstats $tempdir/$jobid.pairstats $tempdir/$jobid.psicov $tempdir/$jobid.evfold $tempdir/$jobid.gremlin $tempdir/$jobid.ss2 $tempdir/$jobid.solv $maindir/data/weights_6A_G.dat $maindir/data/weights_65A_G.dat $maindir/data/weights_7A_G.dat $maindir/data/weights_75A_G.dat $maindir/data/weights_8A_G.dat $maindir/data/weights_85A_G.dat $maindir/data/weights_9A_G.dat $maindir/data/weights_10A_G.dat $maindir/data/weights_811A_G.dat $maindir/data/weights_1012A_G.dat | sort -n -r -k 5 | head -5000 > $tempdir/$jobid.nnpsicov"

@@ -1,0 +1,1 @@
+perl -ne 'BEGIN{$/="\n>"}if(/^\s*(\S+)/){open(F,">$1.a3m")||warn"$1.a3m write failed:$!\n";chomp;print F ">", $_}'
