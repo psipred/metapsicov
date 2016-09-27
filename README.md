@@ -36,4 +36,8 @@ Also requires uniref100
 
 `../psipred/bin/psipass2 ../psipred/data/weights_p2.dat 1 1.0 1.0 test.ss2 test.ss`
 
-``
+`./bin/solvpred test.mtx data/weights_solv.dat > test.solv`
+
+8. Run PSICOV components
+
+`./bin/alnstats test.aln test.colstats test.pairstats`
