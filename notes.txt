@@ -19,9 +19,9 @@
 
 4) system("$bindir/makemat -P $tempdir/$jobid > /dev/null")
 5) system("$hhblits/hhblits -i $tempdir/$jobid.fasta -n 3 -e 0.001 -d $maindir/data/hhsuite/uniprot20_2013_03 -cpu 4 -oa3m $tempdir/$jobid.a3m -diff inf -cov 80 -id 99 > $tempdir/$jobid.hhblog
-
 6) grep -v '^>' $tempdir/$jobid.a3m | sed 's/[a-z]//g' > $tempdir/$jobid.hhbaln
 7) $naln_hhblits = `cat $tempdir/$jobid.hhbaln | wc -l`;
+
 8) system("$bindir/jack_hhblits $jobid $bindir $tempdir $maindir/data/blast/uniref100 > $tempdir/$jobid.jacklog"
 9) $naln_jack = `cat $tempdir/$jobid.jackaln | wc -l`;
 10) Pick most hit?

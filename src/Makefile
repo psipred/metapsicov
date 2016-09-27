@@ -11,13 +11,23 @@ CC		= cc
 CFLAGS		= -O
 LIBS		= -lm
 
-all:		chkparse
+all:		chkparse solvpred alnstats
 
 install:
-		/bin/cp chkparse ../bin
+	/bin/cp chkparse ../bin
+	/bin/cp solvpred ../bin
+	/bin/cp alnstats ../bin
 
 clean:
-		/bin/rm -f chkparse
+	/bin/rm -f chkparse
+	/bin/rm -f solvpred
+	/bin/rm -f alnstats
 
-chkparse:	chkparse.c
-		$(CC) $(CFLAGS) chkparse.c $(LIBS) -o chkparse
+chkparse:
+	$(CC) $(CFLAGS) chkparse.c $(LIBS) -o chkparse
+
+solvpred:
+	$(CC) $(CFLAGS) solvpred_avpred.c $(LIBS) -o solvpred
+
+alnstats:
+	$(CC) $(CFLAGS) alnstats.c $(LIBS) -o alnstats
