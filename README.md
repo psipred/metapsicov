@@ -40,4 +40,5 @@ Also requires uniref100
 
 8. Run PSICOV components
 
+`ulimit -s unlimited`
 `./bin/alnstats test.aln test.colstats test.pairstats`
