@@ -44,34 +44,34 @@ sub RunMetaPSICOV
 	&MailError("CONSIP3 ERROR 01 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     open(MMOUT, ">$tempdir/$jobid.pn") or die;
     print MMOUT "$jobid.chk";
     close(MMOUT);
     open(MMOUT, ">$tempdir/$jobid.sn") or die;
     print MMOUT "$prefix.fasta";
     close(MMOUT);
-    
+
     if (system("$bindir/makemat -P $tempdir/$jobid > /dev/null") != 0)
     {
 	&MailError("CONSIP3 ERROR 02 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("$bindir/hhblits -i $tempdir/$prefix.fasta -n 3 -e 0.001 -d $maindir/data/hhsuite/uniprot20_2016_02 -cpu 4 -oa3m $tempdir/$prefix.a3m -diff inf -cov 50 -id 99 > $tempdir/$prefix.hhblog 2>&1") != 0)
     {
 	&MailError("CONSIP3 ERROR 03 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("grep -v '^>' $tempdir/$prefix.a3m | sed 's/[a-z]//g' > $tempdir/$prefix.hhbaln") != 0)
     {
 	&MailError("CONSIP3 ERROR 04 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     $naln_hhblits = `cat $tempdir/$prefix.hhbaln | wc -l`;
-    
+
     if ($naln_hhblits < 3000)
     {
 	# Try to find more sequences via jackhmmer/UNIREF100
@@ -80,14 +80,14 @@ sub RunMetaPSICOV
 	    &MailError("CONSIP3 ERROR 05 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	$naln_jack = `cat $tempdir/$prefix.jackaln | wc -l`;
     }
     else
     {
 	$naln_jack = 0;
     }
-    
+
     if ($naln_jack > $naln_hhblits)
     {
 	system("/bin/cp -f $tempdir/$prefix.jackaln $tempdir/$prefix.aln")
@@ -96,77 +96,78 @@ sub RunMetaPSICOV
     {
 	system("/bin/cp -f $tempdir/$prefix.hhbaln $tempdir/$prefix.aln")
     }
-    
+
     if (system("$bindir/psipred $tempdir/$jobid.mtx $maindir/data/psipred/weights.dat $maindir/data/psipred/weights.dat2 $maindir/data/psipred/weights.dat3 > $tempdir/$jobid.ss") != 0)
     {
 	&MailError("CONSIP3 ERROR 06 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("$bindir/psipass2 $maindir/data/psipred/weights_p2.dat 1 1.0 1.0 $tempdir/$prefix.ss2 $tempdir/$jobid.ss > /dev/null") != 0)
     {
 	&MailError("CONSIP3 ERROR 07 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("$bindir/solvpred $tempdir/$jobid.mtx $maindir/data/weights_solv.dat > $tempdir/$prefix.solv") != 0)
     {
 	&MailError("CONSIP3 ERROR 08 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("$bindir/alnstats $tempdir/$prefix.aln $tempdir/$prefix.colstats $tempdir/$prefix.pairstats > /dev/null") != 0)
     {
 	&MailError("CONSIP3 ERROR 09 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     $naln = `cat $tempdir/$prefix.aln | wc -l`;
-    
+
     if ($naln >= 10)
     {
 	$psicovret = system("timeout 86400 $bindir/psicov -z 6 -o -d 0.03 $tempdir/$prefix.aln > $tempdir/$prefix.psicov 2>&1");
-	
+
 	if ($psicovret != 0 && $psicovret >> 8 != 124)
 	{
 	    &MailError("CONSIP3 ERROR 10 ($psicovret) - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	$ccmret = system("timeout 86400 $bindir/ccmpred -t 6 $tempdir/$prefix.aln $tempdir/$prefix.ccmpred > /dev/null 2>&1");
-	
+
 	if ($ccmret != 0 && $ccmret >> 8 != 124)
 	{
 	    &MailError("CONSIP3 ERROR 11 ($ccmret) - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	if (system("$bindir/freecontact -a 8 < $tempdir/$prefix.aln > $tempdir/$prefix.evfold") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 12 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
     }
-	
+
     if (system("touch $tempdir/$prefix.psicov $tempdir/$prefix.evfold $tempdir/$prefix.ccmpred") != 0)
     {
 	&MailError("CONSIP3 ERROR 13 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("$bindir/metapsicov $tempdir/$prefix.colstats $tempdir/$prefix.pairstats $tempdir/$prefix.psicov $tempdir/$prefix.evfold $tempdir/$prefix.ccmpred $tempdir/$prefix.ss2 $tempdir/$prefix.solv $maindir/data/weights_6A.dat $maindir/data/weights_65A.dat $maindir/data/weights_7A.dat $maindir/data/weights_75A.dat $maindir/data/weights_8A.dat $maindir/data/weights_85A.dat $maindir/data/weights_9A.dat $maindir/data/weights_10A.dat $maindir/data/weights_811A.dat $maindir/data/weights_1012A.dat > $tempdir/$prefix.metapsicov.stage1") != 0)
     {
 	&MailError("CONSIP3 ERROR 14 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-    
+
     if (system("$bindir/metapsicovp2 $tempdir/$prefix.colstats $tempdir/$prefix.metapsicov.stage1 $tempdir/$prefix.ss2 $tempdir/$prefix.solv $maindir/data/weights_pass2.dat | sort -n -r -k 5 | head -5000 > $tempdir/$prefix.metapsicov.stage2") != 0)
     {
 	&MailError("CONSIP3 ERROR 15 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	exit 0;
     }
-}    
+}
 
+## start main here
 
 $ENV{'BLASTMAT'} = "$maindir/data/blast";
 $ENV{'BLASTDB'} = "$maindir/data/blast";
@@ -253,7 +254,7 @@ while ($masked =~ /([A-Za-z]+)/g)
     $domlen = length($1);
     $roffset = pos($masked) - $domlen;
     $domseq = $1;
-    
+
     if (length($domseq) >= 30 && length($domseq) < $nres)
     {
 	open(DOMSOUT, ">$tempdir/$jobid.$roffset.fasta") or die;

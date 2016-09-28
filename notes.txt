@@ -1,6 +1,21 @@
-1) Run HHBlits
+1) Run HHBlits to find areas we can predict on
 $bindir/hhblits -i $tempdir/$jobid.fasta -n 3 -e 0.001 -d $maindir/data/hhsuite/pdb70 -cpu 4 -o $tempdir/$jobid.hhr > $tempdir/$jobid.pdbhhblog 2>&1"
 
-2) hhr_parse.pl
+2) run metapsicov steps
 
-Parses the HHblits
+i) blast
+ii)hhblits vs uniprot
+iii) if less than 3000 seqs then jack_hhblits
+iv) psipred and solvpred components
+v) alnstats and psicov (timeouts)
+vi) ccmpred (timeout)
+vii) freecontact
+viii) touch outputs
+ix) metapsicov
+x) metapsicovp
+
+
+X) Given results in 1 find regions that did not have hits and are >30 residues
+`hhr_parse.pl example/test.fsa test.hhr . test`
+
+Xi) If we produced any subsequences run the metapsicov steps over each file

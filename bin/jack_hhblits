@@ -63,7 +63,7 @@ if ($status) then
 endif
 echo "hhblits"
 # NOTE - assumes that $jobid.a3m is already there!
-$HHLIB/build/src/hhblits -i $jobid.a3m -d $jobid-mydb/mydb -oa3m $jobid.a3mout -e 1E-20 -n 3 -cpu 4 -diff inf -id 99 -cov 80
+$HHLIB/build/src/hhblits -i $jobid.a3m -d $jobid-mydb/mydb -oa3m $jobid.a3mout -e 1E-3 -n 3 -cpu 4 -diff inf -id 99 -cov 50
 
 if ($status) then
    exit 1
