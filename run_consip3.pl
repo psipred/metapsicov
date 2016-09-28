@@ -82,24 +82,24 @@ while (<HHRFILE>)
 {
     if (/^..[0-9] /)
     {
-	@recs = split(' ', substr($_, 34));
+	    @recs = split(' ', substr($_, 34));
 
-	if ($recs[0] >= 99.0)
-	{
-	    @range = split('-', $recs[6]);
-
-	    #print $range[0]-1, "-", $range[1]-1, "\n";
-	    for ($i = $range[0]-1; $i <= $range[1]-1; $i++)
+	    if ($recs[0] >= 99.0)
 	    {
-		substr($masked, $i, 1) = ' ';
-	    }
+	      @range = split('-', $recs[6]);
+
+  	    #print $range[0]-1, "-", $range[1]-1, "\n";
+  	    for ($i = $range[0]-1; $i <= $range[1]-1; $i++)
+  	    {
+	  	    substr($masked, $i, 1) = ' ';
+	      }
 	    #print $range[0], " ", $range[1], "\n";
-	}
+	    }
     }
 
     if (/^>/)
     {
-	last;
+	    last;
     }
 }
 
@@ -109,7 +109,7 @@ while ($masked =~ /([A-Za-z]+)/g)
 {
     $roffset = pos($masked) - length($1);
     $domseq = $1;
-    
+
     if (length($domseq) >= 30)
     {
 	open(DOMSOUT, ">$tempdir/$jobid.$roffset.fasta") or die;
@@ -128,7 +128,7 @@ while ($masked =~ /([A-Za-z]+)/g)
 	open(MMOUT, ">$tempdir/$jobid.sn") or die;
 	print MMOUT "$jobid.$roffset.fasta";
 	close(MMOUT);
-	
+
 	if (system("$bindir/makemat -P $tempdir/$jobid > /dev/null") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 02 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
@@ -136,20 +136,20 @@ while ($masked =~ /([A-Za-z]+)/g)
 	}
 
 	if (system("$bindir/hhblits -i $tempdir/$jobid.$roffset.fasta -n 3 -e 0.001 -d $maindir/data/hhsuite/uniprot20_2016_02 -cpu 4 -oa3m $tempdir/$jobid.$roffset.a3m -diff inf -cov 50 -id 99 > $tempdir/$jobid.$roffset.hhblog 2>&1") != 0)
-	    
+
 	{
 	    &MailError("CONSIP3 ERROR 03 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	if (system("grep -v '^>' $tempdir/$jobid.$roffset.a3m | sed 's/[a-z]//g' > $tempdir/$jobid.$roffset.hhbaln") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 04 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	$naln_hhblits = `cat $tempdir/$jobid.$roffset.hhbaln | wc -l`;
-	
+
 	if ($naln_hhblits < 2000)
 	{
 	    # Try to find more sequences via jackhmmer/UNIREF100
@@ -158,14 +158,14 @@ while ($masked =~ /([A-Za-z]+)/g)
 		&MailError("CONSIP3 ERROR 05 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 		exit 0;
 	    }
-	    
+
 	    $naln_jack = `cat $tempdir/$jobid.$roffset.jackaln | wc -l`;
 	}
 	else
 	{
 	    $naln_jack = 0;
 	}
-	
+
 	if ($naln_jack > $naln_hhblits)
 	{
 	    system("/bin/cp -f $tempdir/$jobid.$roffset.jackaln $tempdir/$jobid.$roffset.aln")
@@ -174,7 +174,7 @@ while ($masked =~ /([A-Za-z]+)/g)
 	{
 	    system("/bin/cp -f $tempdir/$jobid.$roffset.hhbaln $tempdir/$jobid.$roffset.aln")
 	}
-	
+
 	if (system("$bindir/psipred $tempdir/$jobid.mtx $maindir/data/psipred/weights.dat $maindir/data/psipred/weights.dat2 $maindir/data/psipred/weights.dat3 > $tempdir/$jobid.ss") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 06 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
@@ -186,7 +186,7 @@ while ($masked =~ /([A-Za-z]+)/g)
 	    &MailError("CONSIP3 ERROR 07 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	if (system("$bindir/solvpred $tempdir/$jobid.mtx $maindir/data/weights_solv.dat > $tempdir/$jobid.$roffset.solv") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 08 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
@@ -204,40 +204,40 @@ while ($masked =~ /([A-Za-z]+)/g)
 	if ($naln >= 10)
 	{
 	    $psicovret = system("timeout 129600 $bindir/psicov -z 6 -o -d 0.03 $tempdir/$jobid.$roffset.aln > $tempdir/$jobid.$roffset.psicov 2>&1");
-    
+
 	    if ($psicovret != 0 && $psicovret >> 8 != 124)
 	    {
 		&MailError("CONSIP3 ERROR 10 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 		exit 0;
 	    }
-	    
+
 	    $ccmret = system("timeout 86400 $bindir/ccmpred -t 6 $tempdir/$jobid.$roffset.aln $tempdir/$jobid.$roffset.ccmpred > /dev/null 2>&1");
-	    
+
 	    if ($ccmret != 0 && $ccmret >> 8 != 124)
 	    {
 		&MailError("CONSIP3 ERROR 11 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 		exit 0;
 	    }
-	    
+
 	    if (system("$bindir/freecontact -a 8 < $tempdir/$jobid.$roffset.aln > $tempdir/$jobid.$roffset.evfold") != 0)
 	    {
 		&MailError("CONSIP3 ERROR 12 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 		exit 0;
 	    }
 	}
-	
+
 	if (system("touch $tempdir/$jobid.$roffset.psicov $tempdir/$jobid.$roffset.evfold $tempdir/$jobid.$roffset.ccmpred") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 13 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	if (system("$bindir/metapsicov $tempdir/$jobid.$roffset.colstats $tempdir/$jobid.$roffset.pairstats $tempdir/$jobid.$roffset.psicov $tempdir/$jobid.$roffset.evfold $tempdir/$jobid.$roffset.ccmpred $tempdir/$jobid.$roffset.ss2 $tempdir/$jobid.$roffset.solv $maindir/data/weights_6A.dat $maindir/data/weights_65A.dat $maindir/data/weights_7A.dat $maindir/data/weights_75A.dat $maindir/data/weights_8A.dat $maindir/data/weights_85A.dat $maindir/data/weights_9A.dat $maindir/data/weights_10A.dat $maindir/data/weights_811A.dat $maindir/data/weights_1012A.dat > $tempdir/$jobid.$roffset.metapsicov.stage1") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 14 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
 	    exit 0;
 	}
-	
+
 	if (system("$bindir/metapsicovp2 $tempdir/$jobid.$roffset.colstats $tempdir/$jobid.$roffset.metapsicov.stage1 $tempdir/$jobid.$roffset.ss2 $tempdir/$jobid.$roffset.solv $maindir/data/weights_pass2.dat | sort -n -r -k 5 | head -5000 > $tempdir/$jobid.$roffset.metapsicov.stage2") != 0)
 	{
 	    &MailError("CONSIP3 ERROR 15 - please report error to psipred\@cs.ucl.ac.uk\n", $email);

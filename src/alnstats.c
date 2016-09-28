@@ -73,6 +73,8 @@ int main(int argc, char **argv)
     char buf[4096], name[512], seq[MAXSEQLEN], qseq[160], *cp;
     FILE *ifp, *singofp, *pairofp;
 
+    char filename[1024];
+
     if (argc != 4)
 	   fail("Usage: alnstats alnfile singoutfile pairoutfile");
 
