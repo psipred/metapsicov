@@ -1,5 +1,4 @@
 1) Run HHBlits to find areas we can predict on
-$bindir/hhblits -i $tempdir/$jobid.fasta -n 3 -e 0.001 -d $maindir/data/hhsuite/pdb70 -cpu 4 -o $tempdir/$jobid.hhr > $tempdir/$jobid.pdbhhblog 2>&1"
 
 2) run metapsicov steps
 

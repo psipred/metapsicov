@@ -38,7 +38,7 @@ http://hmmer.org/download.html
 Requires openmpi
 Also requires uniref100
 
-`./bin/jack_hhblits test /scratch0/NOT_BACKED_UP/dbuchan/Applications/hmmer-3.1b2 ¬¬ /cs/research/bioinf/home1/green/dbuchan/Code/metapsicov /cs/research/bioinf/home1/green/dbuchan/Code/consip3/data/blast/uniref100 example/test.fsa /cs/research/bioinf/home1/green/dbuchan/Code/metapsicov > test.jacklog`
+`./bin/jack_hhblits test /scratch0/NOT_BACKED_UP/dbuchan/Applications/hmmer-3.1b2 /scratch0/NOT_BACKED_UP/dbuchan/Applications/hh-suite /cs/research/bioinf/home1/green/dbuchan/Code/metapsicov /cs/research/bioinf/home1/green/dbuchan/Code/consip3/data/blast/uniref100 example/test.fsa /cs/research/bioinf/home1/green/dbuchan/Code/metapsicov > test.jacklog`
 
 
 

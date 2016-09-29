@@ -56,7 +56,22 @@ endif
 echo "Building hh db"
 #perl $bindir/bin/hhblitsdb.pl -cpu 4 -o $jobid-mydb/mydb -ia3m $jobid-mya3m > /dev/null
 #still using old hhsuite 2 db creation script becase hhsuitedb.py
-python $HHLIB/scripts/hhsuitedb.py --cpu 4 -o $tmpdir/$jobid-mydb/mydb --ia3m "${tmpdir}/${jobid}-mya3m/*" --force > /dev/null
+# This take 4 hours! replace with ffindex build and cstranslate commands
+#python $HHLIB/scripts/hhsuitedb.py --cpu 4 -o $tmpdir/$jobid-mydb/mydb --ia3m "${tmpdir}/${jobid}-mya3m/*" --force > /dev/null
+$HHLIB/build/lib/ffindex/ffindex_build -s $jobid-mydb/mydb_a3m.ffdata $jobid-mydb/mydb_a3m.ffindex $jobid-mya3m/
+foreach x ($jobid-mya3m/*)
+    set filename = `echo $x | sed -e 's/\.a3m//'`
+    $HHLIB/build/src/hhmake -i $x -o $jobid-mya3m/$x.hhm
+end
+#remove first line from each hhm
+foreach x ($jobid-mya3m/*.hhm)
+    tail -n +2 $x > tmpfile
+    mv tmpfile $x
+end
+
+$HHLIB/build/lib/ffindex/src/ffindex_build -s $jobid-mydb/mydb_hhm.ffdata $jobid-mydb/mydb_hhm.ffindex $jobid-mya3m/*.hhm
+cstranslate -A  -D /scratch0/NOT_BACKED_UP/dbuchan/usr/data/context_data.lib -x 0.3 -c 4 -f -i $jobid-mydb/mydb_a3m -o $jobid-mydb/mydb_cs219 -I a3m -b
+exit 0
 
 if ($status) then
    exit 1
