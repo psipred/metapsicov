@@ -68,3 +68,6 @@ if `cat $tempdir/$prefix.aln | wc -l` is greater than 10 do these steps
 
 10. Run metapsicov elements
 `touch test.psicov test.evfold test.ccmpred`
+
+`bin/metapsicov test.colstats test.pairstats test.psicov test.evfold test.ccmpred test.ss2 test.solv data/weights_6A.dat data/weights_65A.dat data/weights_7A.dat data/weights_75A.dat data/weights_8A.dat data/weights_85A.dat data/weights_9A.dat data/weights_10A.dat data/weights_811A.dat data/weights_1012A.dat > $test.metapsicov.stage1`
+`bin/metapsicovp2 test.colstats test.metapsicov.stage1 test.ss2 test.solv data/weights_pass2.dat | sort -n -r -k 5 | head -5000 > test.metapsicov.stage2`
