@@ -3,7 +3,7 @@ Match_columns 52
 No_of_seqs    1120 out of 11984
 Neff          12.4053
 Searched_HMMs 100
-Date          Wed Sep 28 10:32:35 2016
+Date          Wed Sep 28 12:21:36 2016
 Command       hhblits -i example/test.fsa -n 3 -e 0.001 -d /scratch0/NOT_BACKED_UP/dbuchan/hhblitsdb/pdb70 -cpu 4 -o test.hhr 
 
  No Hit                             Prob E-value P-value  Score    SS Cols Query HMM  Template HMM

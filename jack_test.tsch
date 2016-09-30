@@ -1,0 +1,18 @@
+#!/bin/tcsh -f
+
+set jobid = $1
+set HHLIB = $2
+
+$HHLIB/build/lib/ffindex/src/ffindex_build -s $jobid-mydb/mydb_a3m.ffdata $jobid-mydb/mydb_a3m.ffindex $jobid-mya3m/
+foreach x ($jobid-mya3m/*)
+    set filename = `echo $x | sed -e 's/\.a3m//'`
+    $HHLIB/build/src/hhmake -i $x -o $x.hhm
+end
+#remove first line from each hhm
+foreach x ($jobid-mya3m/*.hhm)
+    tail -n +2 $x > tmpfile
+    mv tmpfile $jobid-hhm/$x
+# end
+#80 mins to here
+$HHLIB/build/lib/ffindex/src/ffindex_build -s $jobid-mydb/mydb_hhm.ffdata $jobid-mydb/mydb_hhm.ffindex $jobid-myhhm/
+$HHLIB/build/src/cstranslate -A $HHLIB/data/cs219.lib -D $HHLIB/data/context_data.lib -x 0.3 -c 4 -f -i $jobid-mydb/mydb_a3m -o $jobid-mydb/mydb_cs219 -I a3m -b
