@@ -6,8 +6,9 @@
 4. Uniref90 blastdb
 5. hmmer and uniref100
 6. Psipred (with solv pred)
-7. CCMPRED
-8.
+7. cblas library https://github.com/xianyi/OpenBLAS pass CFLAGS CPPFLAG AND LDFLAGS
+7. CCMPRED git clone --recursive https://github.com/soedinglab/CCMpred
+8. Freecontact wget ftp://rostlab.org/free/freecontact-1.0.21.tar.xz
 
 
 # MetaPSICOV Protocol
@@ -40,10 +41,7 @@ Also requires uniref100
 
 `./bin/jack_hhblits test /scratch0/NOT_BACKED_UP/dbuchan/Applications/hmmer-3.1b2  /cs/research/bioinf/home1/green/dbuchan/Code/metapsicov /cs/research/bioinf/home1/green/dbuchan/Code/consip3/data/blast/uniref100 example/test.fsa /cs/research/bioinf/home1/green/dbuchan/Code/metapsicov > test.jacklog`
 
-
-
 6. Check which ever of hhbaln or jackaln has the most hits and copy that to the PSICOV input format
-
 `cat test.hhbaln | wc -l`
 `cat test.jackaln | wc -l`
 
@@ -56,7 +54,17 @@ Also requires uniref100
 
 `./bin/solvpred test.mtx data/weights_solv.dat > test.solv`
 
-8. Run PSICOV components
+8. Run PSICOV pre-processor components
 
 `ulimit -s unlimited`
 `./bin/alnstats test.aln test.colstats test.pairstats`
+
+9. Run Contact predictors
+if `cat $tempdir/$prefix.aln | wc -l` is greater than 10 do these steps
+
+`timeout 86400 bin/psicov -z 6 -o -d 0.03 test.aln > test.psicov 2>&1`
+`timeout 86400 /cs/research/bioinf/home1/green/dbuchan/Code/CCMpred/bin/ccmpred -t 6 test.aln test.ccmpred > /dev/null 2>&1`
+`/cs/research/bioinf/home1/green/dbuchan/Code/freecontact-1.0.21/src/freecontact -a 8 < test.aln > test.evfold`
+
+10. Run metapsicov elements
+`touch test.psicov test.evfold test.ccmpred`

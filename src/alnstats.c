@@ -14,7 +14,7 @@
 
 #define MAXSEQLEN 5000
 
-char **aln;
+char  **aln;
 int nseqs;
 
 const char     *rescodes = "ARNDCQEGHILKMFPSTWYVXXX";
@@ -65,35 +65,33 @@ int
     return (isalpha(ch) ? aacvs[ch & 31] : 20);
 }
 
-int main(int argc, char **argv)
+int             main(int argc, char **argv)
 {
-    int a, b, c, d, i, j, ii, jj, k, l, n, llen, maxnps=3, posn, qstart, seqlen, endflg = FALSE, tots, maxtots, lstart, nids, s;
+    int             a, b, c, d, i, j, ii, jj, k, l, n, llen, maxnps=3, posn, qstart, seqlen, endflg = FALSE, tots, maxtots, lstart, nids, s;
     double aacomp[21], sumj[21], sum, score, pab[21][21], pa[MAXSEQLEN][21], pav[MAXSEQLEN][21], di, pdir, hahb, hx, hy, hxy, mi, mip, z, oldvec[21], change, wtsum, idthresh=0.38, potsum;
     float *weight;
-    char buf[4096], name[512], seq[MAXSEQLEN], qseq[160], *cp;
+    char            buf[4096], name[512], seq[MAXSEQLEN], qseq[160], *cp;
     FILE *ifp, *singofp, *pairofp;
 
-    char filename[1024];
-
     if (argc != 4)
-	   fail("Usage: alnstats alnfile singoutfile pairoutfile");
+	fail("Usage: alnstats alnfile singoutfile pairoutfile");
 
     ifp = fopen(argv[1], "r");
     if (!ifp)
-	   fail("Unable to open alignment file!");
+	fail("Unable to open alignment file!");
 
     for (nseqs=0;; nseqs++)
-      if (!fgets(seq, MAXSEQLEN, ifp))
-	     break;
+	if (!fgets(seq, MAXSEQLEN, ifp))
+	    break;
 
     aln = malloc(nseqs * sizeof(char *));
     weight = malloc(nseqs * sizeof(float));
 
     rewind(ifp);
-
+    
     if (!fgets(seq, MAXSEQLEN, ifp))
 	fail("Bad alignment file!");
-
+    
     seqlen = strlen(seq)-1;
 
     if (!(aln[0] = malloc(seqlen)))
@@ -101,18 +99,18 @@ int main(int argc, char **argv)
 
     for (j=0; j<seqlen; j++)
 	aln[0][j] = aanum(seq[j]);
-
+    
     for (i=1; i<nseqs; i++)
     {
 	if (!fgets(seq, MAXSEQLEN, ifp))
 	    break;
-
+	
 	if (seqlen != strlen(seq)-1)
 	    fail("Length mismatch in alignment file!");
-
+	
 	if (!(aln[i] = malloc(seqlen)))
 	    fail("Out of memory!");
-
+	
 	for (j=0; j<seqlen; j++)
 	    aln[i][j] = aanum(seq[j]);
     }
@@ -122,17 +120,17 @@ int main(int argc, char **argv)
     /* Calculate sequence weights */
     for (i=0; i<nseqs; i++)
 	weight[i] = 1.0;
-
+    
     for (i=0; i<nseqs; i++)
     {
 	for (j=i+1; j<nseqs; j++)
 	{
 	    int nthresh = idthresh * seqlen;
-
+	
 	    for (k=0; nthresh > 0 && k<seqlen; k++)
 		if (aln[i][k] != aln[j][k])
 		    nthresh--;
-
+	    
 	    if (nthresh > 0)
 	    {
 		weight[i]++;
@@ -147,9 +145,9 @@ int main(int argc, char **argv)
     /* Calculate singlet frequencies with pseudocount = 1 */
     for (i=0; i<seqlen; i++)
     {
-for (a=0; a<21; a++)
+	for (a=0; a<21; a++)
 	    pa[i][a] = 1.0;
-
+	
 	for (k=0; k<nseqs; k++)
 	{
 	    a = aln[k][i];
@@ -157,101 +155,102 @@ for (a=0; a<21; a++)
 		pa[i][a] += weight[k];
 	    aacomp[a] += weight[k];
 	}
-
+	
 	for (a=0; a<21; a++)
 	    pa[i][a] /= 21.0 + wtsum;
     }
 
     float mimat[MAXSEQLEN][MAXSEQLEN], misum[MAXSEQLEN], mimean=0.0;
-
+    
     for (i=0; i<seqlen; i++)
-	    misum[i] = 0.0;
-
+	misum[i] = 0.0;
+	    
     for (i=0; i<seqlen; i++)
     {
-	   for (j=i+1; j<seqlen; j++)
-	   {
+	for (j=i+1; j<seqlen; j++)
+	{
 	    /* Calculate pair frequencies with pseudocount = 1 */
 	    for (a=0; a<21; a++)
-		   for (b=0; b<21; b++)
+		for (b=0; b<21; b++)
 		    pab[a][b] = 1.0 / 21.0;
-
-	     for (k=0; k<nseqs; k++)
-	     {
-		     a = aln[k][i];
-		     b = aln[k][j];
-		     if (a < 21 && b < 21)
-		      pab[a][b] += weight[k];
-	     }
-
-	      for (a=0; a<21; a++)
-		     for (b=0; b<21; b++)
-		     {
-		       pab[a][b] /= 21.0 + wtsum;
-		      pab[b][a] = pab[a][b];
-
+		    
+	    for (k=0; k<nseqs; k++)
+	    {
+		a = aln[k][i];
+		b = aln[k][j];
+		if (a < 21 && b < 21)
+		    pab[a][b] += weight[k];
+	    }
+	    
+	    for (a=0; a<21; a++)
+		for (b=0; b<21; b++)
+		{
+		    pab[a][b] /= 21.0 + wtsum;
+		    pab[b][a] = pab[a][b];
+		    
 //		    printf("%d/%d %d/%d %f %f %f %f\n", i+1, a, j+1, b, pab[i][j][a][b], pa[i][a] , pa[j][b], pab[i][j][a][b] - pa[i][a] * pa[j][b]);
-		     }
+		}
 
 	    for (mi=a=0; a<20; a++)
-		    for (b=0; b<20; b++)
-		      mi += pab[a][b] * log(pab[a][b]/pa[i][a]/pa[j][b]);
+		for (b=0; b<20; b++)
+		    mi += pab[a][b] * log(pab[a][b]/pa[i][a]/pa[j][b]);
 
 	    mimat[i][j] = mimat[j][i] = mi;
-      misum[i] += mi;
+	    misum[i] += mi;
 	    misum[j] += mi;
 	    mimean += mi;
 	}
     }
-
+    
     mimean /= seqlen * (seqlen-1) * 0.5;
 
     if (!(singofp = fopen(argv[2], "w")))
-	   fail("Cannot open sing output file!");
+	fail("Cannot open sing output file!");
 
     if (!(pairofp = fopen(argv[3], "w")))
-	    fail("Cannot open pair output file!");
+	fail("Cannot open pair output file!");
 
     fprintf(singofp, "%d\n", seqlen);
     fprintf(singofp, "%d\n", nseqs);
     fprintf(singofp, "%f\n", wtsum);
 
     for (a=0; a<21; a++)
-	  fprintf(singofp, "%6.4f%c", aacomp[a] / wtsum / seqlen, (a == 20) ? '\n' : ' ');
+	fprintf(singofp, "%6.4f%c", aacomp[a] / wtsum / seqlen, (a == 20) ? '\n' : ' ');
 
     for (i=0; i<seqlen; i++)
     {
-	   float entropy;
+	float entropy;
+	
+	for (entropy=j=0; j<21; j++)
+	{
+	    fprintf(singofp, "%5.3f ", pa[i][j]);
+	    entropy += pa[i][j] * log(pa[i][j]);
+	}
 
-	   for (entropy=j=0; j<21; j++)
-	   {
-	       fprintf(singofp, "%5.3f ", pa[i][j]);
-	       entropy += pa[i][j] * log(pa[i][j]);
-	   }
+	entropy = -entropy / log(21.0);
 
-	   entropy = -entropy / log(21.0);
+	fprintf(singofp, " %6.4f\n", entropy);
+	
+	for (j=i+1; j<seqlen; j++)
+	{
+	    for (potsum=k=0; k<nseqs; k++)
+	    {
+		a = aln[k][i];
+		b = aln[k][j];
+		if (a < 20 && b < 20)
+		    potsum += weight[k] * contmat[a][b];
+	    }
 
-	   fprintf(singofp, " %6.4f\n", entropy);
+	    potsum /= wtsum;
 
-	   for (j=i+1; j<seqlen; j++)
-	   {
-	       for (potsum=k=0; k<nseqs; k++)
-	       {
-		       a = aln[k][i];
-		       b = aln[k][j];
-		       if (a < 20 && b < 20)
-		        potsum += weight[k] * contmat[a][b];
-	       }
-
-	       potsum /= wtsum;
-
-	      mip = mimat[i][j] - misum[i]*misum[j]/SQR(seqlen-1.0)/mimean;
-        fprintf(pairofp, "%d %d %f %f %f\n", i+1, j+1, potsum, mimat[i][j], mip);
-	   }
+	    mip = mimat[i][j] - misum[i]*misum[j]/SQR(seqlen-1.0)/mimean;
+	    
+	    fprintf(pairofp, "%d %d %f %f %f\n", i+1, j+1, potsum, mimat[i][j], mip);
+	}
     }
-
+    
     fclose(singofp);
     fclose(pairofp);
-
+    
     return 0;
 }
