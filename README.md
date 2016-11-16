@@ -7,25 +7,27 @@
 5. hmmer and uniref100
 6. Psipred (with solv pred)
 7. cblas library https://github.com/xianyi/OpenBLAS pass CFLAGS CPPFLAG AND LDFLAGS
-7. CCMPRED git clone --recursive https://github.com/soedinglab/CCMpred
-8. Freecontact wget ftp://rostlab.org/free/freecontact-1.0.21.tar.xz
+8. CCMPRED git clone --recursive https://github.com/soedinglab/CCMpred
+9. Freecontact wget ftp://rostlab.org/free/freecontact-1.0.21.tar.xz
 
 
 # MetaPSICOV Protocol
 
 Adjust the number of threads/cpus appropriately to your environment
 
-##. Run the initial HHBLits to find areas with hits
+## Run the initial HHBLits to find areas with hits
 `hhblits -i example/test.fsa -n 3 -e 0.001 -d /scratch0/NOT_BACKED_UP/dbuchan/hhblitsdb/pdb70 -cpu 4 -o test.hhr > test.pdbhhblog`
 
-##. Running the MetaPSICOV components
+## Running the MetaPSICOV components
 
 1. Run blast+ and build matrix
+
 `/scratch0/NOT_BACKED_UP/dbuchan/Applications/ncbi-blast-2.2.31+/bin/psiblast -evalue 0.001 -num_descriptions 2000 -num_alignments 0 -num_threads 4 -num_iterations 3 -inclusion_ethresh 0.001 -query example/test.fsa -db /scratch0/NOT_BACKED_UP/dbuchan/uniref/uniref90.fasta -out test.bls -out_pssm test.pssm`
 
 `./bin/chkparse test.pssm > test.mtx`
 
 2. Run HHBlits vs unprot20 db - HH-Suite soeding lab
+
 `hhblits -i example/test.fsa -n 3 -e 0.001 -d /scratch0/NOT_BACKED_UP/dbuchan/hhblitsdb/uniprot20_2016_02/uniprot20_2016_02 -cpu 10 -oa3m test.a3m -diff inf -cov 50 -id 99 > test.hhlog`
 
 3. Get all hhblits alignments lines(!?) and count
