@@ -1,0 +1,105 @@
+#!/bin/tcsh
+
+# This is a simple script which will carry out all of the basic steps
+# required to make a PSIPRED V3 prediction plus a solvent accessibility
+# prediction for MetaPSICOV. Note that it assumes that the
+# following programs are in the appropriate directories:
+# blastpgp - PSIBLAST executable (from NCBI toolkit)
+# makemat - IMPALA utility (from NCBI toolkit)
+# psipred - PSIPRED V3 program
+# psipass2 - PSIPRED V3 program
+
+# NOTE: This script is a replacement for the normal PSIPRED run script and
+# assumes that PSIPRED has been already installed. Paths should be edited
+# to agree with your PSIPRED installation
+
+# The name of the BLAST data bank you wish to use
+set dbname = allfilt
+
+# Where the NCBI program binaries have been installed
+set ncbidir = /usr/local/bin
+
+#
+# We assume here that the solvpred binary and weights_solv.dat from MetaPSICOV have been
+# installed in the same location as the PSIPRED binaries and data files. This should be
+# amended to whatever is the case on your installation.
+#
+
+# Where the PSIPRED V3 binaries have been installed
+set execdir = /usr/local/bin
+
+# Where the MetaPSICOV binaries have been installed
+set execdir2 = /usr/local/bin
+
+# Where the PSIPRED V3 data files have been installed
+set datadir = /usr/local/share/psipred 
+
+# Where the MetaPSICOV data files have been installed
+set datadir2 = /usr/local/share/MetaPSICOV
+
+set basename = $1:r
+set rootname = $basename:t
+
+# Generate a "unique" temporary filename root
+set hostid = `hostid`
+set tmproot = psitmp$$$hostid
+
+\cp -f $1 $tmproot.fasta
+
+echo "Running PSI-BLAST with sequence" $1 "..."
+
+$ncbidir/blastpgp -a 12 -b 0 -j 3 -h 0.001 -d $dbname -i $tmproot.fasta -C $tmproot.chk >& $tmproot.blast
+
+if ($status != 0) then
+    cat $tmproot.blast
+    echo "FATAL: Error whilst running BLAST blastpgp program - script terminated!"
+    exit 1
+endif
+
+echo "Predicting secondary structure..."
+
+echo $tmproot.chk > $tmproot.pn
+echo $tmproot.fasta > $tmproot.sn
+
+$ncbidir/makemat -P $tmproot
+
+if ($status != 0) then
+    echo "FATAL: Error whilst running BLAST makemat program - script terminated!"
+    exit 1
+endif
+
+echo Pass1 ...
+
+$execdir/psipred $tmproot.mtx $datadir/weights.dat $datadir/weights.dat2 $datadir/weights.dat3 > $rootname.ss
+
+if ($status != 0) then
+    echo "FATAL: Error whilst running PSIPRED psipred - script terminated!"
+    exit 1
+endif
+
+echo Pass2 ...
+
+$execdir/psipass2 $datadir/weights_p2.dat 1 1.0 1.0 $rootname.ss2 $rootname.ss > $rootname.horiz
+
+if ($status != 0) then
+    echo "FATAL: Error whilst running PSIPRED psipass2 - script terminated!"
+    exit 1
+endif
+
+echo Solvation pass ...
+
+# Run SOLVPRED
+$execdir2/solvpred $tmproot.mtx $datadir2/weights_solv.dat > $rootname.solv
+
+if ($status != 0) then
+    echo "FATAL: Error whilst running MetaPSICOV solvpred - script terminated!"
+    exit 1
+endif
+
+# Remove temporary files
+
+echo Cleaning up ...
+\rm -f $tmproot.* error.log
+
+echo "Final output files:" $rootname.ss2 $rootname.horiz $rootname.solv
+echo "Finished."

@@ -1,0 +1,26 @@
+Brief usage notes for MetaPSICOV
+================================
+
+To run MetaPSICOV you need to download and install PSIPRED, PSICOV, FreeContact, CCMpred and HHBLITS
+separately. Please see relevant home pages for these packages for information on installation:
+http://bioinf.cs.ucl.ac.uk/downloads/psipred
+http://bioinf.cs.ucl.ac.uk/downloads/PSICOV
+https://rostlab.org/owiki/index.php/FreeContact
+https://bitbucket.org/soedinglab/ccmpred
+ftp://toolkit.genzentrum.lmu.de/pub/HH-suite
+
+To compile MetaPSICOV, untar, cd to src directory and run "make" followed by "make install".
+
+A skeleton csh script called run_metapsicov is provided for running all of the MetaPSICOV steps.
+Please consult the comments in this script (and the runpsipredandsolv script) for information on
+how to customise the installation for your own setup.
+
+Example usage:
+
+run_metapsicov 5ptpA.fasta
+
+
+If you use this software for your research, please cite the following reference:
+
+MetaPSICOV: Combining coevolution methods for accurate prediction of contacts and long range hydrogen bonding in proteins
+Jones, D.T., Singh, T., Kosciolek, T. & Tetchner, S. Bioinformatics (2014) doi:10.1093/bioinformatics/btu791
