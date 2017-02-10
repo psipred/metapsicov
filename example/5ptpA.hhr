@@ -3,7 +3,7 @@ Match_columns 222
 No_of_seqs    14180 out of 20067
 Neff          8.68939
 Searched_HMMs 6227
-Date          Fri Feb 10 12:07:09 2017
+Date          Fri Feb 10 15:45:31 2017
 Command       /scratch0/NOT_BACKED_UP/dbuchan/Applications/hh-suite/bin/hhblits -i example/5ptpA.fasta -d /scratch1/NOT_BACKED_UP/dbuchan/hhblitsdb/uniprot20_2016_02/uniprot20_2016_02 -oa3m test.a3m -n 3 -maxfilt 500000 -diff inf -id 99 -cov 60 
 
  No Hit                             Prob E-value P-value  Score    SS Cols Query HMM  Template HMM
