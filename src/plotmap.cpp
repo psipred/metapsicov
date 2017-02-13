@@ -47,7 +47,7 @@ int main(int argc, char **argv){
 	int horizontal_text_y_scale_offset = -25;
 	int vertical_text_x_scale_offset = -30;
 	int vertical_text_y_scale_offset = 32;
-	
+
 	int input_files[3];
 
 	if (argc < 4) {
@@ -56,14 +56,14 @@ int main(int argc, char **argv){
 	}
 
 	while(i < argc){
-                if(argv[i][0] == '-'){    
+                if(argv[i][0] == '-'){
                         i++;
                         switch(argv[i-1][1]){
-				case 's' : {score_threshold = atof(argv[i]); 
+				case 's' : {score_threshold = atof(argv[i]);
 			printf("Score theshold is %f\n",score_threshold);break;}
                                 case 'h' : {usage();return 1;}
                                 default:   {usage();return 1;}
-                        }   
+                        }
                 }else{
 			//printf("file %d: %s\n",i,argv[i]);
 			input_files[j] = i;
@@ -76,7 +76,7 @@ int main(int argc, char **argv){
 	ifp = fopen(argv[input_files[0]], "r");
 	if (!ifp){
 		fprintf(stderr, "Couldn't open alignment file\n");
-		return 0;
+		return 1;
 	}
 
 	fgets(seq, MAXSEQLEN, ifp);
@@ -96,8 +96,8 @@ int main(int argc, char **argv){
 	im = gdImageCreate(x_buffer+seq_len*pixels_per_res,y_buffer+seq_len*pixels_per_res);
 
 	// Allocate some colours
-	white = gdImageColorAllocate(im, 255, 255, 255);  
-	black = gdImageColorAllocate(im, 0, 0, 0);  
+	white = gdImageColorAllocate(im, 255, 255, 255);
+	black = gdImageColorAllocate(im, 0, 0, 0);
 	green = gdImageColorAllocate(im, 5, 255, 20);
 	red = gdImageColorAllocate(im, 220, 15, 15);
 	blue = gdImageColorAllocate(im, 0, 0, 255);
@@ -106,12 +106,12 @@ int main(int argc, char **argv){
 	int *n1_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (n1_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 	int *n2_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (n2_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 
 
@@ -119,12 +119,12 @@ int main(int argc, char **argv){
 	ifp = fopen(argv[input_files[1]], "r");
 	if (!ifp){
 		fprintf(stderr, "Couldn't open native contacts\n");
-		return 0;
+		return 1;
 	}
 
 	// Parse observed contacts file
 	while(fgets(line, 100, ifp)){
-		if (sscanf(line, "%d%d%f", &r1, &r2, &dist)){	
+		if (sscanf(line, "%d%d%f", &r1, &r2, &dist)){
 			if((r2-r1)>5){
 				n1_array[count] = r1;
 				n2_array[count] = r2;
@@ -136,7 +136,7 @@ int main(int argc, char **argv){
 	printf("Parsed native contacts.\n");
 
 	// Draw contacts
-//	for(i = 0; i < count; i++){		
+//	for(i = 0; i < count; i++){
 //		gdImageFilledRectangle(im,(x_buffer/2)+(n1_array[i]-1)*pixels_per_res,(y_buffer/2)+(n2_array[i]-1)*pixels_per_res,pixels_per_res+(x_buffer/2)+(n1_array[i]-1)*pixels_per_res,pixels_per_res+(y_buffer/2)+(n2_array[i]-1)*pixels_per_res,red);
 //
 //		gdImageFilledRectangle(im,(x_buffer/2)+(n2_array[i]-1)*pixels_per_res,(y_buffer/2)+(n1_array[i]-1)*pixels_per_res,pixels_per_res+(x_buffer/2)+(n2_array[i]-1)*pixels_per_res,pixels_per_res+(y_buffer/2)+(n1_array[i]-1)*pixels_per_res,red);
@@ -147,60 +147,60 @@ int main(int argc, char **argv){
 	ifp = fopen(argv[input_files[2]], "r");
 	if (!ifp){
 		fprintf(stderr, "Couldn't open predicted contacts\n");
-		return 0;
+		return 1;
 	}
 
 	// Allocate some storage for contacts & scores
 	int *r1_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (r1_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 	int *r2_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (r2_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 
 	// Allocate some storage for contacts & scores
 	int *m1_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (m1_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 	int *m2_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (m2_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 
 	float *score_array = (float *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (float));
 	if (score_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 
 	int *ss1_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (ss1_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 	int *ss2_array = (int *) malloc((MAXSEQLEN*MAXSEQLEN) * sizeof (int));
 	if (ss2_array == NULL) {
 		printf("malloc failed\n");
-		return 0;
+		return 1;
 	}
 
 	char tmp[10];
 	count = 0;
 	// Parse predicted contacts file
 	while(fgets(line, 100, ifp)){
-		if (sscanf(line, "%d%d%d%d%f", &r1, &r2, &d1, &d2, &score)){	
-		//if (sscanf(line, "%d%d%d%f%[^,]", &r1, &r2, &d1, &score, tmp)){	
+		if (sscanf(line, "%d%d%d%d%f", &r1, &r2, &d1, &d2, &score)){
+		//if (sscanf(line, "%d%d%d%f%[^,]", &r1, &r2, &d1, &score, tmp)){
 
 			//printf("-%c--\n",tmp[1]);
 			//if(tmp[1] == 'T'){
-				//printf("----%c--\n",tmp[1]);	
+				//printf("----%c--\n",tmp[1]);
 				if(score>=0.5){
 					r1_array[count] = r1;
 					r2_array[count] = r2;
@@ -214,7 +214,7 @@ int main(int argc, char **argv){
 	printf("Parsed predicted contacts.\n");
 
 	// Draw contacts
-	for(i = 0; i < count; i++){		
+	for(i = 0; i < count; i++){
 		gdImageFilledRectangle(im,((x_buffer/2)+(r1_array[i]-1)*pixels_per_res)+2,((y_buffer/2)+(r2_array[i]-1)*pixels_per_res)+2,(pixels_per_res+(x_buffer/2)+(r1_array[i]-1)*pixels_per_res)-2,(pixels_per_res+(y_buffer/2)+(r2_array[i]-1)*pixels_per_res)-2,green);
 
 		gdImageFilledRectangle(im,((x_buffer/2)+(r2_array[i]-1)*pixels_per_res)+2,((y_buffer/2)+(r1_array[i]-1)*pixels_per_res)+2,(pixels_per_res+(x_buffer/2)+(r2_array[i]-1)*pixels_per_res)-2,(pixels_per_res+(y_buffer/2)+(r1_array[i]-1)*pixels_per_res)-2,green);
@@ -227,10 +227,10 @@ int main(int argc, char **argv){
 		if(i % 25 == 0){
 
 			// Draw hoizontal scale
-			gdImageLine(im, (x_buffer/4), (y_buffer/2)+i*pixels_per_res, (x_buffer/4)+seq_len*pixels_per_res, (y_buffer/2)+i*pixels_per_res,red);  
+			gdImageLine(im, (x_buffer/4), (y_buffer/2)+i*pixels_per_res, (x_buffer/4)+seq_len*pixels_per_res, (y_buffer/2)+i*pixels_per_res,red);
 
 			// Draw vertical scale
-			gdImageLine(im, (x_buffer/2)+i*pixels_per_res, (y_buffer/4), (x_buffer/2)+i*pixels_per_res,(y_buffer/4)+seq_len*pixels_per_res, red);  
+			gdImageLine(im, (x_buffer/2)+i*pixels_per_res, (y_buffer/4), (x_buffer/2)+i*pixels_per_res,(y_buffer/4)+seq_len*pixels_per_res, red);
 
 			char str[10];
 			sprintf(str,"%d",i);
@@ -242,10 +242,10 @@ int main(int argc, char **argv){
 		}
 
 		// Draw hoizontal lines
-		gdImageLine(im, (x_buffer/2), (y_buffer/2)+i*pixels_per_res, (x_buffer/2)+seq_len*pixels_per_res, (y_buffer/2)+i*pixels_per_res, black);  
+		gdImageLine(im, (x_buffer/2), (y_buffer/2)+i*pixels_per_res, (x_buffer/2)+seq_len*pixels_per_res, (y_buffer/2)+i*pixels_per_res, black);
 
 		// Draw vertical lines
-		gdImageLine(im, (x_buffer/2)+i*pixels_per_res, (y_buffer/2), (x_buffer/2)+i*pixels_per_res,(y_buffer/2)+seq_len*pixels_per_res, black);  
+		gdImageLine(im, (x_buffer/2)+i*pixels_per_res, (y_buffer/2), (x_buffer/2)+i*pixels_per_res,(y_buffer/2)+seq_len*pixels_per_res, black);
 
 
 		// Draw contacts for 'identical' residues
@@ -287,6 +287,5 @@ int main(int argc, char **argv){
 	free(score_array);
 	score_array = NULL;
 
-	return 1;
+	return 0;
 }
-
