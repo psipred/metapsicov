@@ -1,24 +1,37 @@
-Brief usage notes for MetaPSICOV
-================================
+Brief usage notes for metapsicov2
+==================================
 
-To run MetaPSICOV you need to download and install PSIPRED, PSICOV, FreeContact, CCMpred and HHBLITS
+To run MetaPSICOV you need to download and install PSIPRED, PSICOV, FreeContact, CCMpred and HHBLITS, HMMER
 separately. Please see relevant home pages for these packages for information on installation:
 http://bioinf.cs.ucl.ac.uk/downloads/psipred
 http://bioinf.cs.ucl.ac.uk/downloads/PSICOV
 https://rostlab.org/owiki/index.php/FreeContact
 https://bitbucket.org/soedinglab/ccmpred
 ftp://toolkit.genzentrum.lmu.de/pub/HH-suite
+http://hmmer.org/download.html
+
+Ensure you download HHSuite v2.x, the latest release is not supported.
+
+You will also need the uniref90 database and the uniref100 database. You need to prepare a blast database
+for uniref90 and use the hmmer esl-sfetch tool to prepare the SSI index of the uniref100 database
 
 To compile MetaPSICOV, untar, cd to src directory and run "make" followed by "make install".
 
-A skeleton csh script called run_metapsicov is provided for running all of the MetaPSICOV steps.
-Please consult the comments in this script (and the runpsipredandsolv script) for information on
-how to customise the installation for your own setup.
+A perl script called run_metapsicov is provided for running all of the MetaPSICOV2 steps.
+Before running the script please ensure that the paths at the top of the run_metapsicov script
+accurately reflect the installation locations of the requisite software.
+You will also need to open the jack_hhblits shell script and ensure the jackhmmer and hhdir paths
+are correct.
+
+Note also you may consider a close read of the run_metapsicov and jack_hhblits scripts to
+ensure that the component software is being run with options that are compatible with your
+computer or operating system
 
 Example usage:
 
-run_metapsicov 5ptpA.fasta
-
+mkdir ~/[TEMPDIR]
+cp 5ptpA.fasta ~/[TEMPDIR]
+run_metapsicov 5ptpA
 
 If you use this software for your research, please cite the following reference:
 
