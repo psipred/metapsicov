@@ -1,0 +1,280 @@
+Reading in 38292 column state sequences with a total of 9795117 residues
+
+Iteration 1
+Prefiltering database
+.
+HMMs passed 1st prefilter (gapless profile-profile alignment)  :    463
+HMMs passed 2nd prefilter (gapped profile-profile alignment)   :    187
+HMMs passed 2nd prefilter and not found in previous iterations :    187
+Scoring 187 HMMs using HMM-HMM Viterbi alignment
+.........
+Realigning 149 HMMs using HMM-HMM Maximum Accuracy algorithm
+...............
+Merging hits to query profile
+1 clusters_found=   1  seqs_found=   1  name=5edm_A
+1 clusters_found=   2  seqs_found=   2  name=3nxp_A
+1 clusters_found=   3  seqs_found=   3  name=1gvz_A
+1 clusters_found=   4  seqs_found=   4  name=1md8_A
+1 clusters_found=   5  seqs_found=   5  name=1spj_A
+1 clusters_found=   6  seqs_found=   6  name=4igd_A
+1 clusters_found=   7  seqs_found=   7  name=1ton_A
+1 clusters_found=   8  seqs_found=   8  name=1gpz_A
+1 clusters_found=   9  seqs_found=   9  name=2b9l_A
+1 clusters_found=  10  seqs_found=  10  name=4i8h_A
+1 clusters_found=  11  seqs_found=  11  name=4nfe_A
+1 clusters_found=  12  seqs_found=  12  name=4f4o_C
+1 clusters_found=  13  seqs_found=  13  name=4kkd_A
+1 clusters_found=  14  seqs_found=  14  name=1aut_C
+1 clusters_found=  15  seqs_found=  15  name=1hj8_A
+1 clusters_found=  16  seqs_found=  16  name=5jb9_S
+1 clusters_found=  17  seqs_found=  17  name=4bxw_A
+1 clusters_found=  18  seqs_found=  18  name=3f1s_B
+1 clusters_found=  19  seqs_found=  19  name=1elv_A
+1 clusters_found=  20  seqs_found=  20  name=2xrc_A
+1 clusters_found=  21  seqs_found=  21  name=2xxl_A
+1 clusters_found=  22  seqs_found=  22  name=4e7n_A
+1 clusters_found=  23  seqs_found=  23  name=3s9c_A
+1 clusters_found=  24  seqs_found=  24  name=4crg_A
+1 clusters_found=  25  seqs_found=  25  name=4dur_A
+1 clusters_found=  26  seqs_found=  26  name=3beu_A
+1 clusters_found=  27  seqs_found=  27  name=1cgh_A
+1 clusters_found=  28  seqs_found=  28  name=1euf_A
+1 clusters_found=  29  seqs_found=  29  name=2qy0_B
+1 clusters_found=  30  seqs_found=  30  name=1fxy_A
+1 clusters_found=  31  seqs_found=  31  name=4ud9_H
+1 clusters_found=  32  seqs_found=  32  name=1npm_A
+1 clusters_found=  33  seqs_found=  33  name=1sgf_A
+1 clusters_found=  34  seqs_found=  34  name=2psx_A
+1 clusters_found=  35  seqs_found=  35  name=1lo6_A
+1 clusters_found=  36  seqs_found=  36  name=3h7t_A
+1 clusters_found=  37  seqs_found=  37  name=4dgj_A
+1 clusters_found=  38  seqs_found=  38  name=2aiq_A
+1 clusters_found=  39  seqs_found=  39  name=4k8y_A
+1 clusters_found=  40  seqs_found=  40  name=3s69_A
+1 clusters_found=  41  seqs_found=  41  name=3h5c_B
+1 clusters_found=  42  seqs_found=  42  name=1z8g_A
+1 clusters_found=  43  seqs_found=  43  name=1zjk_A
+1 clusters_found=  44  seqs_found=  44  name=4q7z_A
+1 clusters_found=  45  seqs_found=  45  name=2qxi_A
+1 clusters_found=  46  seqs_found=  46  name=2bdy_A
+1 clusters_found=  47  seqs_found=  47  name=4j1y_A
+1 clusters_found=  48  seqs_found=  48  name=4jni_U
+1 clusters_found=  49  seqs_found=  49  name=4lk4_A
+1 clusters_found=  50  seqs_found=  50  name=1orf_A
+1 clusters_found=  51  seqs_found=  51  name=2jkh_A
+1 clusters_found=  52  seqs_found=  52  name=1iau_A
+1 clusters_found=  53  seqs_found=  53  name=1ym0_A
+1 clusters_found=  54  seqs_found=  54  name=1rtf_B
+1 clusters_found=  55  seqs_found=  55  name=1ij7_A
+1 clusters_found=  56  seqs_found=  56  name=3fzz_A
+1 clusters_found=  57  seqs_found=  57  name=2olg_A
+1 clusters_found=  58  seqs_found=  58  name=1a7s_A
+1 clusters_found=  59  seqs_found=  59  name=3rp2_A
+1 clusters_found=  60  seqs_found=  60  name=1yr4_A
+1 clusters_found=  61  seqs_found=  61  name=4ylq_H
+1 clusters_found=  62  seqs_found=  62  name=1yc0_A
+1 clusters_found=  63  seqs_found=  63  name=3ncl_A
+1 clusters_found=  64  seqs_found=  64  name=4ag1_A
+1 clusters_found=  65  seqs_found=  65  name=5eok_A
+1 clusters_found=  66  seqs_found=  66  name=1eq9_A
+1 clusters_found=  67  seqs_found=  67  name=1fon_A
+1 clusters_found=  68  seqs_found=  68  name=4xde_A
+1 clusters_found=  69  seqs_found=  69  name=2any_A
+1 clusters_found=  70  seqs_found=  70  name=2r0l_A
+1 clusters_found=  71  seqs_found=  71  name=4m7g_A
+1 clusters_found=  72  seqs_found=  72  name=3h7o_A
+1 clusters_found=  73  seqs_found=  73  name=2xw9_A
+1 clusters_found=  74  seqs_found=  74  name=2jde_A
+1 clusters_found=  75  seqs_found=  75  name=1mza_A
+1 clusters_found=  76  seqs_found=  76  name=5abw_A
+1 clusters_found=  77  seqs_found=  77  name=1ao5_A
+1 clusters_found=  78  seqs_found=  78  name=5avd_A
+1 clusters_found=  79  seqs_found=  79  name=2f9n_A
+1 clusters_found=  80  seqs_found=  80  name=1bru_P
+1 clusters_found=  81  seqs_found=  81  name=3gyl_B
+1 clusters_found=  82  seqs_found=  82  name=1t8o_A
+1 clusters_found=  83  seqs_found=  83  name=4x0l_C
+1 clusters_found=  84  seqs_found=  84  name=2zgc_A
+1 clusters_found=  85  seqs_found=  85  name=1azz_A
+1 clusters_found=  86  seqs_found=  86  name=3tvj_B
+1 clusters_found=  87  seqs_found=  87  name=1ddj_A
+1 clusters_found=  88  seqs_found=  88  name=4h4f_A
+1 clusters_found=  89  seqs_found=  89  name=3hrz_D
+1 clusters_found=  90  seqs_found=  90  name=3w94_A
+1 clusters_found=  91  seqs_found=  91  name=2odp_A
+1 clusters_found=  92  seqs_found=  92  name=2asu_B
+1 clusters_found=  93  seqs_found=  93  name=2oq5_A
+1 clusters_found=  94  seqs_found=  94  name=1elt_A
+1 clusters_found=  95  seqs_found=  95  name=2hlc_A
+1 clusters_found=  96  seqs_found=  96  name=1fiw_A
+1 clusters_found=  97  seqs_found=  97  name=1fuj_A
+1 clusters_found=  98  seqs_found=  98  name=1pq7_A
+1 clusters_found=  99  seqs_found=  99  name=1rrk_A
+1 clusters_found= 100  seqs_found= 100  name=1si5_H
+1 clusters_found= 101  seqs_found= 101  name=1p3c_A
+1 clusters_found= 102  seqs_found= 102  name=2pka_B
+1 clusters_found= 103  seqs_found= 103  name=4nsv_A
+1 clusters_found= 104  seqs_found= 104  name=2o8l_A
+1 clusters_found= 105  seqs_found= 105  name=3wy8_A
+1 clusters_found= 106  seqs_found= 106  name=4ink_A
+1 clusters_found= 107  seqs_found= 107  name=1yph_C
+1 clusters_found= 108  seqs_found= 108  name=2ea3_A
+1 clusters_found= 109  seqs_found= 109  name=2oua_A
+1 clusters_found= 110  seqs_found= 110  name=3cp7_A
+1 clusters_found= 111  seqs_found= 111  name=3k6y_A
+1 clusters_found= 112  seqs_found= 112  name=2sfa_A
+1 clusters_found= 113  seqs_found= 113  name=4fln_A
+1 clusters_found= 114  seqs_found= 114  name=1wcz_A
+1 clusters_found= 115  seqs_found= 115  name=1l1j_A
+1 clusters_found= 116  seqs_found= 116  name=4k1t_A
+1 clusters_found= 117  seqs_found= 117  name=1hpg_A
+1 clusters_found= 118  seqs_found= 118  name=1agj_A
+1 clusters_found= 119  seqs_found= 119  name=4jcn_A
+1 clusters_found= 120  seqs_found= 120  name=2qa9_E
+1 clusters_found= 121  seqs_found= 121  name=1yph_E
+1 clusters_found= 122  seqs_found= 122  name=4ic5_A
+1 clusters_found= 123  seqs_found= 123  name=1qtf_A
+1 clusters_found= 124  seqs_found= 124  name=3pv2_A
+1 clusters_found= 125  seqs_found= 125  name=2pfe_A
+1 clusters_found= 126  seqs_found= 126  name=3sti_A
+1 clusters_found= 127  seqs_found= 127  name=1zyo_A
+1 clusters_found= 128  seqs_found= 128  name=4ash_A
+1 clusters_found= 129  seqs_found= 129  name=5c2z_A
+1 clusters_found= 130  seqs_found= 130  name=2bhg_A
+1 clusters_found= 131  seqs_found= 131  name=3qo6_A
+1 clusters_found= 132  seqs_found= 132  name=3stj_A
+1 clusters_found= 133  seqs_found= 133  name=2pka_A
+1 clusters_found= 134  seqs_found= 134  name=3lgi_A
+1 clusters_found= 135  seqs_found= 135  name=4mvn_A
+1 clusters_found= 136  seqs_found= 136  name=2as9_A
+1 clusters_found= 137  seqs_found= 137  name=4ic6_A
+1 clusters_found= 138  seqs_found= 138  name=1ky9_A
+1 clusters_found= 139  seqs_found= 139  name=3tjo_A
+1 clusters_found= 140  seqs_found= 140  name=4a8c_A
+1 clusters_found= 141  seqs_found= 141  name=5jd8_A
+1 clusters_found= 142  seqs_found= 142  name=4ri0_A
+1 clusters_found= 143  seqs_found= 143  name=2w5e_A
+1 clusters_found= 144  seqs_found= 144  name=1lcy_A
+1 clusters_found= 145  seqs_found= 145  name=3num_A
+1 clusters_found= 146  seqs_found= 146  name=2b0f_A
+1 clusters_found= 147  seqs_found= 147  name=3q3y_A
+1 clusters_found= 148  seqs_found= 148  name=5fx6_A
+1 clusters_found= 149  seqs_found= 149  name=3m7u_A
+1 clusters_found= 150  seqs_found= 150  name=3qzr_A
+1 clusters_found= 151  seqs_found= 151  name=3zve_A
+1 clusters_found= 152  seqs_found= 152  name=2hal_A
+152 sequences belonging to 152 database HMMs found with an E-value < 0.001       
+Number of effective sequences of resulting query HMM: Neff = 13.15
+Diversity is above threshold (10.00). Stop searching! (Change threshold using -neffmax <float>.)
+
+Query         5PTPA Sequence from PDB ATOM records
+Match_columns 222
+No_of_seqs    1 out of 1
+Neff          1.0 
+Searched_HMMs 187
+Date          Thu Nov 23 12:30:55 2017
+Command       /opt/Applications/hh-suite/bin/hhblits -i /home/dbuchan/metapsicov/5ptpA.fasta -n 3 -e 0.001 -d /scratch1/NOT_BACKED_UP/dbuchan/hhblitsdb/pdb70 -cpu 4 -o /home/dbuchan/metapsicov/5ptpA.hhr 
+
+ No Hit                             Prob E-value P-value  Score    SS Cols Query HMM  Template HMM
+  1 5edm_A Prothrombin; kringle, p 100.0   6E-50 1.2E-53  329.1   0.0  221    1-221   307-562 (568)
+  2 3nxp_A Prethrombin-1; alloster 100.0 1.4E-48 3.2E-52  300.5   0.0  221    1-221   166-421 (424)
+  3 1gvz_A Kallikrein-1E2; antigen 100.0 6.6E-47 1.5E-50  264.0   0.0  221    1-222     1-236 (237)
+  4 1md8_A C1R complement serine p 100.0 1.5E-45 3.2E-49  278.8   0.0  213    1-221    90-329 (329)
+  5 1spj_A Kallikrein 1; serine pr 100.0 1.5E-45 3.4E-49  255.1   0.0  221    1-222     1-237 (238)
+  6 4igd_A Mannan-binding lectin s 100.0 1.6E-45 3.5E-49  279.7   0.0  218    1-221   156-404 (406)
+  7 1ton_A Tonin; hydrolase(serine 100.0 1.6E-45 3.6E-49  254.6   0.0  220    1-222     1-234 (235)
+  8 1gpz_A Complement C1R componen 100.0 6.1E-45 1.4E-48  276.9   0.0  213    1-221   158-397 (399)
+  9 2b9l_A Prophenoloxidase activa 100.0 1.1E-44 2.3E-48  286.9   0.0  220    1-221   130-384 (394)
+ 10 4i8h_A Cationic trypsin, beta- 100.0 1.1E-44 2.7E-48  244.2   0.0  221    1-222     1-223 (223)
+ 11 4nfe_A Kallikrein-2; chymotryp 100.0 1.4E-44 3.3E-48  251.0   0.0  221    1-222     1-236 (237)
+ 12 4f4o_C Haptoglobin; globin fol 100.0 8.1E-44 1.7E-47  273.9   0.0  214    1-222   103-347 (347)
+ 13 4kkd_A Mannan-binding lectin s 100.0 1.4E-43 3.2E-47  266.8   0.0  219    1-221   155-422 (433)
+ 14 1aut_C Activated protein C; se 100.0 2.4E-43 5.5E-47  246.5   0.0  220    1-221     1-240 (250)
+ 15 1hj8_A Trypsin I; hydrolase, r 100.0 4.7E-43 1.1E-46  237.0   0.0  220    1-222     1-222 (222)
+ 16 5jb9_S Coagulation factor IX;  100.0 5.3E-43 1.2E-46  241.7   0.0  219    1-221     1-234 (235)
+ 17 4bxw_A Factor XA; blood clotti 100.0 6.5E-43 1.5E-46  263.4   0.0  218    1-221   170-411 (423)
+ 18 3f1s_B Vitamin K-dependent pro 100.0 7.5E-43 1.7E-46  252.0   0.0  207    4-221    56-277 (283)
+ 19 1elv_A Complement C1S componen 100.0 1.8E-42   4E-46  258.2   0.0  213    1-221    83-326 (333)
+ 20 2xrc_A Human complement factor 100.0 4.3E-42 9.1E-46  278.0   0.0  217    1-221   322-557 (565)
+ 21 2xxl_A GRAM-positive specific  100.0 5.5E-42 1.1E-45  272.4   0.0  218    1-221   119-374 (408)
+ 22 4e7n_A Snake-venom thrombin-li 100.0 6.2E-42 1.4E-45  235.7   0.0  221    1-221     1-230 (238)
+ 23 3s9c_A Vipera russelli protein 100.0 9.8E-42 2.3E-45  232.1   0.0  218    1-221     1-226 (234)
+ 24 4crg_A Coagulation factor XI;  100.0 1.1E-41 2.7E-45  235.3   0.0  219    1-221     1-237 (238)
+ 25 4dur_A Plasminogen, serine pro 100.0 1.4E-41   3E-45  289.0   0.0  213    1-222   562-791 (791)
+ 26 3beu_A Trypsin, SGT; beta shee 100.0 1.6E-41 3.6E-45  233.7   0.0  211    1-221     1-223 (224)
+ 27 1cgh_A Cathepsin G; inflammati 100.0   2E-41 4.7E-45  228.3   0.0  216    1-221     1-224 (224)
+ 28 1euf_A Duodenase; serine prote 100.0 2.7E-41 6.5E-45  227.0   0.0  218    1-222     1-226 (227)
+ 29 2qy0_B Complement C1R subcompo 100.0 3.1E-41   7E-45  236.5   0.0  213    1-221     1-240 (242)
+ 30 1fxy_A Coagulation factor XA-t 100.0 3.3E-41 7.9E-45  227.7   0.0  221    1-222     1-227 (228)
+ 31 4ud9_H Human alpha thrombin; h 100.0   4E-41   9E-45  238.1   0.0  222    1-222     1-257 (259)
+ 32 1npm_A Neuropsin; serine prote 100.0 4.9E-41 1.2E-44  224.4   0.0  218    1-220     1-225 (225)
+ 33 1sgf_A 7S NGF, nerve growth fa 100.0 7.4E-41 1.8E-44  229.5   0.0  220    1-221     4-238 (240)
+ 34 2psx_A Kallikrein-5; zinc inhi 100.0 7.6E-41 1.8E-44  228.7   0.0  221    1-222     1-226 (227)
+ 35 1lo6_A Kallikrein 6, HK6; seri 100.0 8.4E-41   2E-44  226.0   0.0  219    1-222     1-223 (223)
+ 36 3h7t_A Group 3 allergen smipp- 100.0 9.3E-41 2.2E-44  230.3   0.0  216    1-221     1-230 (235)
+ 37 4dgj_A Enteropeptidase catalyt 100.0   1E-40 2.4E-44  230.1   0.0  219    1-220     1-235 (235)
+ 38 2aiq_A Protein C activator; sn 100.0 1.1E-40 2.5E-44  229.4   0.0  220    1-221     1-223 (231)
+ 39 4k8y_A Kallikrein-4; bowman-BI 100.0 2.4E-40 5.8E-44  220.8   0.0  219    1-221     1-223 (223)
+ 40 3s69_A Thrombin-like enzyme de 100.0 2.7E-40 6.3E-44  226.8   0.0  220    1-221     1-226 (234)
+ 41 3h5c_B Vitamin K-dependent pro 100.0 3.9E-40 9.1E-44  234.3   0.0  206    4-220    97-317 (317)
+ 42 1z8g_A Serine protease hepsin; 100.0   4E-40 9.1E-44  244.9   0.0  217    1-221   118-361 (372)
+ 43 1zjk_A Mannan-binding lectin s 100.0 4.1E-40 9.4E-44  245.4   0.0  215    1-221   162-402 (403)
+ 44 4q7z_A Serine protease 57; try 100.0 4.1E-40 9.6E-44  228.9   0.0  219    1-221     1-231 (250)
+ 45 2qxi_A Kallikrein-7; S1 pocket 100.0 5.3E-40 1.3E-43  221.1   0.0  219    1-222     1-223 (224)
+ 46 2bdy_A Thrombin; thrombin, com 100.0 6.9E-40 1.5E-43  240.6   0.0  221    1-221    31-286 (289)
+ 47 4j1y_A Complement C1S subcompo 100.0 6.6E-40 1.5E-43  243.8   0.0  213    1-221   147-390 (397)
+ 48 4jni_U Urokinase-type plasmino 100.0 1.1E-39 2.5E-43  228.2   0.0  220    1-221     1-247 (247)
+ 49 4lk4_A VESB protease, VC1200;  100.0 2.1E-39 4.4E-43  253.2   0.0  213    1-221    11-247 (357)
+ 50 1orf_A Granzyme A; hydrolase-h 100.0 2.5E-39 5.9E-43  221.0   0.0  219    1-221     1-232 (234)
+ 51 2jkh_A Activated factor XA hea 100.0 3.7E-39 8.6E-43  222.0   0.0  219    1-221     1-234 (241)
+ 52 1iau_A Granzyme B; hydrolase-h 100.0 3.8E-39 8.9E-43  219.2   0.0  217    1-221     1-226 (227)
+ 53 1ym0_A Fibrinotic enzyme compo 100.0 5.8E-39 1.4E-42  220.6   0.0  220    1-222     1-238 (238)
+ 54 1rtf_B (TC)-T-PA, two chain ti 100.0 6.2E-39 1.5E-42  223.1   0.0  219    1-220     1-251 (252)
+ 55 1ij7_A Earthworm fibrinolytic  100.0   1E-38 2.5E-42  216.8   0.0  216    1-219     1-241 (241)
+ 56 3fzz_A Granzyme C; hydrolase,  100.0 1.1E-38 2.7E-42  215.8   0.0  217    1-221     1-227 (227)
+ 57 2olg_A Pro-phenoloxidase activ 100.0 1.2E-38 2.7E-42  227.3   0.0  217    1-220    23-277 (278)
+ 58 1a7s_A Heparin binding protein 100.0 1.3E-38 3.1E-42  213.4   0.0  209    1-221     1-219 (225)
+ 59 3rp2_A RAT MAST cell protease  100.0 1.5E-38 3.7E-42  213.9   0.0  215    1-220     1-224 (224)
+ 60 1yr4_A Trypsin; trypsin, canon 100.0 1.9E-38 4.6E-42  216.9   0.0  217    1-219     1-236 (237)
+ 61 4ylq_H Coagulation factor VII; 100.0   2E-38 4.6E-42  221.0   0.0  219    1-221     1-236 (249)
+ 62 1yc0_A Hepatocyte growth facto 100.0 2.1E-38 4.8E-42  226.5   0.0  220    1-221    36-275 (283)
+ 63 3ncl_A Suppressor of tumorigen 100.0 2.3E-38 5.5E-42  214.2   0.0  219    1-220     1-240 (241)
+ 64 4ag1_A Chymase; hydrolase-de n 100.0 2.6E-38   6E-42  214.9   0.0  217    1-222     1-226 (226)
+ 65 5eok_A Coagulation factor XI;  100.0 3.1E-38 6.8E-42  253.5   0.0  219    1-221   369-605 (606)
+ 66 1eq9_A Chymotrypsin; FIRE ANT, 100.0 3.7E-38 8.9E-42  210.8   0.0  213    1-221     1-222 (222)
+ 67 1fon_A Procarboxypeptidase A-S 100.0 4.5E-38   1E-41  217.2   0.0  217    3-222     1-240 (240)
+ 68 4xde_A Coagulation factor XII; 100.0 6.8E-38 1.6E-41  218.3   0.0  220    1-221     3-245 (257)
+ 69 2any_A Kininogenin, plasma kal 100.0 8.4E-38 1.9E-41  218.7   0.0  219    1-221     1-237 (241)
+ 70 2r0l_A Hepatocyte growth facto 100.0 1.7E-37 4.1E-41  213.4   0.0  220    1-221     1-240 (248)
+ 71 4m7g_A Trypsin-like protease;  100.0   2E-37 4.7E-41  210.5   0.0  213    1-221     1-224 (227)
+ 72 3h7o_A Group 3 allergen smipp- 100.0 2.6E-37 6.3E-41  209.1   0.0  214    2-222     1-228 (228)
+ 73 2xw9_A Complement factor D; im 100.0   3E-37 7.2E-41  208.8   0.0  216    1-220     1-228 (228)
+ 74 2jde_A Urokinase-type plasmino 100.0 3.5E-37 8.1E-41  216.7   0.0  220    1-221    24-270 (276)
+ 75 1mza_A Pro-granzyme K; apoptos 100.0   4E-37 9.3E-41  211.5   0.0  220    1-221     3-236 (240)
+ 76 5abw_A Neutrophil elastase; tr 100.0 4.2E-37   1E-40  206.9   0.0  208    1-220     1-218 (218)
+ 77 1ao5_A Glandular kallikrein-13 100.0 5.8E-37 1.4E-40  212.1   0.0  221    1-222     1-236 (237)
+ 78 5avd_A Elastase-1, chymotrypsi 100.0 5.8E-37 1.4E-40  208.0   0.0  219    1-222     1-240 (240)
+ 79 2f9n_A Alpha I tryptase; serin 100.0 6.3E-37 1.5E-40  211.9   0.0  215    1-221     1-243 (245)
+ 80 1bru_P Elastase, PPE; serine p 100.0 6.5E-37 1.6E-40  207.8   0.0  219    1-222     1-241 (241)
+ 81 3gyl_B Prostasin; ENAC, zymoge 100.0 7.5E-37 1.8E-40  212.5   0.0  220    1-221     1-243 (261)
+ 82 1t8o_A Chymotrypsin A; chymotr 100.0 1.4E-36 3.4E-40  209.2   0.0  219    1-222    16-245 (245)
+ 83 4x0l_C Haptoglobin, zonulin; h 100.0 1.9E-36 4.3E-40  215.4   0.0  214    1-222    15-259 (259)
+ 84 2zgc_A Granzyme M; serine prot 100.0   2E-36 4.7E-40  208.8   0.0  216    1-221     1-230 (240)
+ 85 1azz_A Collagenase; complex (s 100.0 2.1E-36 4.9E-40  206.2   0.0  218    1-221     1-224 (226)
+ 86 3tvj_B Mannan-binding lectin s 100.0 2.1E-36 4.9E-40  208.9   0.0  215    1-221     1-241 (242)
+ 87 1ddj_A Plasminogen; catalytic  100.0 2.2E-36 4.9E-40  212.1   0.0  213    1-222    18-247 (247)
+ 88 4h4f_A Chymotrypsin-C, caldecr 100.0 2.5E-36 5.9E-40  209.3   0.0  219    1-221     1-239 (249)
+ 89 3hrz_D Complement factor B; se 100.0   3E-36 6.9E-40  241.2   0.0  209    4-221   460-733 (741)
+ 90 3w94_A Enteropeptidase-1; seri 100.0   4E-36 9.5E-40  205.8   0.0  219    1-220     1-235 (235)
+ 91 2odp_A Complement C2; C3/C5 co 100.0 6.8E-36 1.6E-39  227.9   0.0  214    2-221   225-502 (509)
+ 92 2asu_B Hepatocyte growth facto 100.0 2.1E-35 4.7E-39  205.5   0.0  210    1-221     1-227 (234)
+ 93 2oq5_A Transmembrane protease, 100.0   2E-35 4.8E-39  201.0   0.0  214    1-220     1-231 (232)
+ 94 1elt_A Elastase; serine protei 100.0   4E-35 9.5E-39  199.1   0.0  215    1-219     1-236 (236)
+ 95 2hlc_A Collagenase; serine pro 100.0 1.4E-34 3.4E-38  195.7   0.0  211    1-222     1-229 (230)
+ 96 1fiw_A Beta-acrosin heavy chai  99.9 3.6E-34 8.1E-38  208.1   0.0  221    1-221     1-250 (290)
+ 97 1fuj_A PR3, myeloblastin; hydr  99.9 3.5E-34 8.3E-38  192.7   0.0  208    1-220     1-221 (221)
+ 98 1pq7_A Trypsin; ultra-high res  99.9 1.7E-33   4E-37  191.2   0.0  213    1-219     1-224 (224)
+ 99 1rrk_A Complement factor B; BB  99.9 1.1E-32 2.6E-36  208.3   0.0  209    4-221   218-491 (497)
+100 1si5_H Scatter factor, hepatoc  99.9 2.7E-32 6.3E-36  189.3   0.0  212    1-221     1-228 (240)
+
+Done

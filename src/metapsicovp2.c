@@ -35,7 +35,7 @@ char seq[MAXSEQLEN];
 struct entry
 {
     char           *id, *seq, **contmap;
-    float         **nnpsicov, *cprob, *hprob, *eprob, *entropy, *psolv, **profile, effnseq;
+    float         **metapsicov, *cprob, *hprob, *eprob, *entropy, *psolv, **profile, effnseq;
     float         *aacomp, cmean, hmean, emean, smean, entropmean;
     int           length, nseq;
 } target;
@@ -244,7 +244,7 @@ predict(int argc, char **argv)
 		for (i = WINL; i <= WINR; i++)
 		    for (j = WINL; j <= WINR; j++)
 			if (i + winpos >= 0 && i + winpos < target.length && j + winpos2 >= 0 && j + winpos2 < target.length)
-			    activation[2 * (WINR-WINL+1) * IPERGRP + (j-WINL) * (WINR-WINL+1) + i - WINL] = target.nnpsicov[i + winpos][j + winpos2];
+			    activation[2 * (WINR-WINL+1) * IPERGRP + (j-WINL) * (WINR-WINL+1) + i - WINL] = target.metapsicov[i + winpos][j + winpos2];
 		
 		seqsep = winpos2 - winpos;
 		
@@ -399,7 +399,7 @@ void            read_dat(char *colname, char *psiname, char *ssname, char *solvn
     
     target.entropmean = aventropy;
     
-    target.nnpsicov = allocmat(nres, nres, sizeof(float));
+    target.metapsicov = allocmat(nres, nres, sizeof(float));
     
     if ((pfp = fopen(psiname, "r")))
     {
@@ -412,13 +412,15 @@ void            read_dat(char *colname, char *psiname, char *ssname, char *solvn
 		continue;
 	    
 	    if (sscanf(buf, "%d%d%*s%*s%f", &i, &j, &consv[0]) != 3)
-		fail("Bad NNPSICOV file!");
+		fail("Bad MetaPSICOV file!");
 	    
-	    target.nnpsicov[i-1][j-1] = target.nnpsicov[j-1][i-1] = consv[0];
+	    target.metapsicov[i-1][j-1] = target.metapsicov[j-1][i-1] = consv[0];
 	}
     
 	fclose(pfp);
     }
+    else
+	fail("Cannot open MetaPSICOV 1st pass file!");
     
     if (!(sfp = fopen(ssname, "r")))
 	fail("Cannot open SS2 file!");
@@ -475,7 +477,7 @@ main(int argc, char **argv)
 
     /* malloc_debug(3); */
     if (argc < 6)
-	fail("usage : metapsicov_pass2 colstats-file nnpsicov-file ss2-file solv-file weight-file1 ... weight-filen");
+	fail("usage : metapsicov_pass2 colstats-file metapsicov-file ss2-file solv-file weight-file1 ... weight-filen");
 
     read_dat(argv[1], argv[2], argv[3], argv[4]);
 

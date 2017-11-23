@@ -7,19 +7,17 @@
 
 INCDIR		= .
 CC		= cc
-CPP    = c++
 
 CFLAGS		= -O
 LIBS		= -lm
-GD     = -lgd
 
-all:		metapsicov metapsicovp2 metapsicovhb alnstats solvpred plotmap
+all:		metapsicov metapsicovp2 metapsicovhb alnstats solvpred
 
 install:
-		/bin/cp -f metapsicov metapsicovp2 metapsicovhb alnstats solvpred plotmap ../bin
+		/bin/cp -f metapsicov metapsicovp2 metapsicovhb alnstats solvpred ../bin
 
 clean:
-		/bin/rm -f metapsicov metapsicovp2 metapsicovhb alnstats solvpred plotmap *.o
+		/bin/rm -f metapsicov metapsicovp2 metapsicovhb alnstats solvpred *.o
 
 solvpred:	solvpred.c solvation_net.h
 		$(CC) $(CFLAGS) solvpred.c $(LIBS) -o solvpred
@@ -35,6 +33,3 @@ metapsicovhb:	metapsicovhb.c metapsicov_pass2_net.h
 
 alnstats:	alnstats.c
 		$(CC) $(CFLAGS) alnstats.c $(LIBS) -o alnstats
-
-plotmap:	plotmap.cpp
-		$(CPP) $(CFLAGS) plotmap.cpp $(LIBS) $(GD) -o plotmap

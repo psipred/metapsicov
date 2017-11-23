@@ -1,0 +1,71 @@
+#!/bin/tcsh
+
+# This script attempts to bootstrap an HHBLITS search using jackhmmer
+
+set jobid = $1
+set bindir = $2
+set tmpdir = $3
+set db = $4
+set jackhmmer = '/opt/Applications/hmmer-3.1b2' #location of HMMER binaries
+set hhdir = '/opt/Applications/hh-suite/' #location of HH-sutie
+
+setenv PATH "$PATH":$bindir
+
+cd $tmpdir
+
+if ($status) then
+   exit 1
+endif
+
+$jackhmmer/src/jackhmmer --cpu 4 -N 3 -E 10 --incE 1e-3 --noali --tblout $jobid.tbl $jobid.fasta $db
+
+if ($status) then
+   exit 1
+endif
+
+$jackhmmer/easel/miniapps/esl-sfetch -f $db $jobid.tbl > $jobid.fseqs
+
+if ($status) then
+   exit 1
+endif
+
+cat $jobid.fasta >> $jobid.fseqs
+
+mkdir -p $jobid-mya3m
+mkdir -p $jobid-mydb
+
+cd $jobid-mya3m
+
+if ($status) then
+   exit 1
+endif
+
+$bindir/fasta2a3msplit < $tmpdir/$jobid.fseqs
+
+if ($status) then
+   exit 1
+endif
+
+cd ..
+
+if ($status) then
+   exit 1
+endif
+
+perl $hhdir/scripts/hhblitsdb.pl -cpu 4 -o $jobid-mydb/mydb -ia3m $jobid-mya3m > /dev/null
+
+if ($status) then
+   exit 1
+endif
+
+# NOTE - assumes that $jobid.a3m is already there!
+$hhdir/bin/hhblits -i $jobid.a3m -d $jobid-mydb/mydb -oa3m $jobid.a3m -e 1e-3 -n 3 -cpu 4 -diff inf -id 99 -cov 50
+
+if ($status) then
+   exit 1
+endif
+
+#\rm -rf $jobid-mya3m &
+#\rm -rf $jobid-mydb &
+
+egrep -v "^>" $jobid.a3m | sed 's/[a-z]//g' > $jobid.jackaln

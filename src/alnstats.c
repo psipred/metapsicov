@@ -2,7 +2,7 @@
 
 /* Copyright (C) 2014 University College London */
 
-/* V1.01 */
+/* V1.03 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -69,35 +69,14 @@ int
     return (isalpha(ch) ? aacvs[ch & 31] : 20);
 }
 
-/* Allocate matrix */
-void           *allocmat(int rows, int columns, int size)
-{
-    int             i;
-    void          **p, *rp;
-
-    rp = malloc(rows * sizeof(void *) + sizeof(int));
-
-    if (rp == NULL)
-	fail("allocmat: malloc [] failed!");
-
-    *((int *)rp) = rows;
-
-    p = rp + sizeof(int);
-
-    for (i = 0; i < rows; i++)
-	if ((p[i] = calloc(columns, size)) == NULL)
-	    fail("allocmat: malloc [][] failed!");
-
-    return p;
-}
-
 int             main(int argc, char **argv)
 {
-    int             a, b, c, d, i, j, ii, jj, k, l, n, llen, maxnps=3, posn, qstart, seqlen, endflg = FALSE, tots, maxtots, lstart, nids, s;
-    double aacomp[21], sumj[21], sum, score, pab[21][21], pa[MAXSEQLEN][21], pav[MAXSEQLEN][21], di, pdir, hahb, hx, hy, hxy, mi, mip, z, oldvec[21], change, wtsum, idthresh=0.38, potsum;
-    float *weight;
-    char            buf[4096], name[512], seq[MAXSEQLEN], qseq[160], *cp;
-    FILE *ifp, *singofp, *pairofp;
+    int         a, b, c, d, i, j, ii, jj, k, l, n, llen, maxnps=3, posn, qstart, seqlen, endflg = FALSE, tots, maxtots, lstart, nids, s;
+    double 	aacomp[21], sumj[21], sum, score, pab[21][21], pa[MAXSEQLEN][21], pav[MAXSEQLEN][21], di, pdir, hahb, hx, hy, hxy, mi, mip, z, oldvec[21], change, wtsum, idthresh=0.38, potsum;
+    static float mimat[MAXSEQLEN][MAXSEQLEN];
+    float 	misum[MAXSEQLEN], mimean=0.0, *weight;
+    char        buf[4096], name[512], seq[MAXSEQLEN], qseq[160], *cp;
+    FILE 	*ifp, *singofp, *pairofp;
 
     if (argc != 4)
 	fail("Usage: alnstats alnfile singoutfile pairoutfile");
@@ -153,6 +132,8 @@ int             main(int argc, char **argv)
 	{
 	    int nthresh = idthresh * seqlen;
 	
+//	    N.B. this calculation is slightly off - really this loop should be: nthresh >= 0
+//	    Doesn't matter much, but should probably fix this when I next generate new training data
 	    for (k=0; nthresh > 0 && k<seqlen; k++)
 		if (aln[i][k] != aln[j][k])
 		    nthresh--;
@@ -167,6 +148,9 @@ int             main(int argc, char **argv)
 
     for (wtsum=i=0; i<nseqs; i++)
 	wtsum += (weight[i] = 1.0 / weight[i]);
+
+    for (a=0; a<21; a++)
+	aacomp[a] = 0.0;
 
     /* Calculate singlet frequencies with pseudocount = 1 */
     for (i=0; i<seqlen; i++)
@@ -186,10 +170,6 @@ int             main(int argc, char **argv)
 	    pa[i][a] /= 21.0 + wtsum;
     }
 
-    float misum[MAXSEQLEN], mimean=0.0, **mimat;
-
-    mimat = allocmat(seqlen, seqlen, sizeof(float));
-    
     for (i=0; i<seqlen; i++)
 	misum[i] = 0.0;
 	    

@@ -1,54 +1,315 @@
-#!/bin/csh
+#!/usr/bin/perl
 
-# Change this to wherever you have installed the hhsuite library files
-setenv HHLIB /usr/local/lib/hhsuite/hh
+# Script to execute CONSIP3 CASP prediction
+# Original written by David Jones in 1998
+# Current version written by David Jones in April 2016
 
-# Edit to more sensible locations e.g. /usr/local
-set metabindir = ./bin
-set metadatadir = ./data
+use Digest::MD5 qw(md5_hex);
+use BSD::Resource;
+use IO::Handle;
+use Text::Wrap;
+use File::Basename;
 
-set sequence = $1
-set target = $1:t:r
+setpriority 0, 0, 1;
 
-echo "Running PSIPRED+SOLVPRED..."
+setrlimit(RLIMIT_AS, RLIM_INFINITY, RLIM_INFINITY);
+setrlimit(RLIMIT_DATA, RLIM_INFINITY, RLIM_INFINITY);
+setrlimit(RLIMIT_STACK, RLIM_INFINITY, RLIM_INFINITY);
 
-# Make sure you edit the runpsipredandsolv script with your local install information
-runpsipredandsolv $1
+$maindir = dirname(__FILE__);
+$metadir = "/home/dbuchan/Code/metapsicov_downloaded";
+$psipreddir = "/home/dbuchan/Code/psipred";
+$blastdir = "/opt/Applications/blast-2.2.26"; # location of legacy blast
+$uniref90 = "/scratch1/NOT_BACKED_UP/dbuchan/uniref/uniref_test_db/uniref_test.fasta"; # location of uniref90 blast db
+$uniref100 = "/scratch1/NOT_BACKED_UP/dbuchan/uniref/unirefmain.fasta"; # location of uniref100 blast db
+$tempdir = "/home/dbuchan/metapsicov"; # tempdir to do work in
+$hhdir = "/opt/Applications/hh-suite"; # location of hhsuite
+$hhdb = "/scratch1/NOT_BACKED_UP/dbuchan/hhblitsdb"; # location of uniprot20_2016_02 hhblits db
+$psicovdir = "/home/dbuchan/Code/psicov"; # location of psicov install
+$ccmpreddir = "/opt/Applications/CCMpred"; # location of CCMPRed install
+$freecontactdir = "/opt/Applications/freecontact-1.0.21"; # locaton of Freecontact install
 
-# You will need to edit this line for your own hhblits installation directories etc.
-# You may want to add extra parameters e.g. to enable multithreading.
-hhblits -i $1 -d /data/seq/hhblits/uniprot20_2013_03 -oa3m $target.a3m -n 3 -maxfilt 500000 -diff inf -id 99 -cov 60 > $target.hhblog
 
-egrep -v "^>" $target.a3m | sed 's/[a-z]//g' > $target.aln
+$ENV{'BLASTMAT'} = "$blastdir/data/";
+$ENV{'HHLIB'} = $hhdir;
 
-# We assume here that psicov, freecontact and ccmpred are in the default shell PATH.
-# If this is not the case you will need to manually add the appropriate path information.
-# You may also want to add extra parameters to these commands e.g. the -a option to freecontact
-# or the -t option to ccmpred to enable multithreading. PSICOV enables multithreading by default.
-if (`cat $target.aln | wc -l` >= 5) then
-    echo "Running PSICOV..."
-    psicov -o -d 0.03 $target.aln > $target.psicov
-    echo "Running freecontact..."
-    freecontact < $target.aln > $target.evfold
-    echo "Running CCMpred..."
-    ccmpred $target.aln $target.ccmpred
-else
-    \rm -f $target.psicov $target.evfold $target.ccmpred
-    touch $target.psicov $target.evfold $target.ccmpred
-endif
+sub RunMetaPSICOV
+{
+  my($prefix) = @_;
+  print("Running: blastpgp\n");
+  if (system("$blastdir/bin/blastpgp -a 4 -b 0 -v 2000 -j 3 -h 0.001 -e 0.001 -d $uniref90 -i $tempdir/$prefix.fasta -C $tempdir/$jobid.chk > $tempdir/$jobid.blast") != 0)
+  {
+    die("CONSIP3 ERROR 01 - please report error to psipred\@cs.ucl.ac.uk\n");
+	  exit 0;
+  }
 
-$metabindir/alnstats $target.aln $target.colstats $target.pairstats
+  open(MMOUT, ">$tempdir/$jobid.pn") or die;
+  print MMOUT "$jobid.chk";
+  close(MMOUT);
+  open(MMOUT, ">$tempdir/$jobid.sn") or die;
+  print MMOUT "$prefix.fasta";
+  close(MMOUT);
+  if (system("$blastdir/bin/makemat -P $tempdir/$jobid > /dev/null") != 0)
+  {
+	  die("CONSIP3 ERROR 02 - please report error to psipred\@cs.ucl.ac.uk\n");
+	  exit 0;
+  }
+  # print("$hhdir/bin/hhblits -i $tempdir/$prefix.fasta -n 3 -e 0.001 -d $hhdb/uniprot20_2016_02/uniprot20_2016_02 -cpu 4 -oa3m $tempdir/$prefix.a3m -diff inf -cov 50 -id 99 > $tempdir/$prefix.hhblog 2>&1");
+  print("Running: hhblits search\n");
+  if (system("$hhdir/bin/hhblits -i $tempdir/$prefix.fasta -n 3 -e 0.001 -d $hhdb/uniprot20_2016_02/uniprot20_2016_02 -cpu 4 -oa3m $tempdir/$prefix.a3m -diff inf -cov 50 -id 99 > $tempdir/$prefix.hhblog 2>&1") != 0)
+  {
+    die("CONSIP3 ERROR 03 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
 
-echo "Running MetaPSICOV Stage 1..."
+  if (system("grep -v '^>' $tempdir/$prefix.a3m | sed 's/[a-z]//g' > $tempdir/$prefix.hhbaln") != 0)
+  {
+    die("CONSIP3 ERROR 04 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
 
-$metabindir/metapsicov $target.colstats $target.pairstats $target.psicov $target.evfold $target.ccmpred $target.ss2 $target.solv $metadatadir/weights_6A.dat $metadatadir/weights_65A.dat $metadatadir/weights_7A.dat $metadatadir/weights_75A.dat $metadatadir/weights_8A.dat $metadatadir/weights_85A.dat $metadatadir/weights_9A.dat $metadatadir/weights_10A.dat $metadatadir/weights_811A.dat $metadatadir/weights_1012A.dat | sort -n -r -k 5 > $target.metapsicov.stage1
+  $naln_hhblits = `cat $tempdir/$prefix.hhbaln | wc -l`;
+  chdir($tempdir);
+  if ($naln_hhblits < 3000)
+  {
+    print("Running: jack_hhblits\n");
+    # Try to find more sequences via jackhmmer/UNIREF100
+    #print("$bindir/jack_hhblits $prefix $bindir $tempdir $uniref100 > $tempdir/$prefix.jacklog");
+    if(system("$bindir/jack_hhblits $prefix $bindir $tempdir $uniref100 > $tempdir/$prefix.jacklog") != 0)
+    {
+      die("CONSIP3 ERROR 05 - please report error to psipred\@cs.ucl.ac.uk\n");
+      exit 0;
+    }
+    $naln_jack = `cat $tempdir/$prefix.jackaln | wc -l`;
+  }
+  else
+  {
+    $naln_jack = 0;
+  }
+  chdir($maindir);
 
-echo "Running MetaPSICOV Stage 2..."
+  if ($naln_jack > $naln_hhblits)
+  {
+    system("/bin/cp -f $tempdir/$prefix.jackaln $tempdir/$prefix.aln")
+  }
+  else
+  {
+    system("/bin/cp -f $tempdir/$prefix.hhbaln $tempdir/$prefix.aln");
+  }
 
-$metabindir/metapsicovp2 $target.colstats $target.metapsicov.stage1 $target.ss2 $target.solv $metadatadir/weights_pass2.dat | sort -n -r -k 5 > $target.metapsicov.stage2
+  print("Running: psipred\n");
+  if (system("$psipreddir/bin/psipred $tempdir/$jobid.mtx $psipreddir/data/weights.dat $psipreddir/data/weights.dat2 $psipreddir/data/weights.dat3 > $tempdir/$jobid.ss") != 0)
+  {
+    die("CONSIP3 ERROR 06 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
 
-echo "Running MetaPSICOV-HB..."
+  if (system("$psipreddir/bin/psipass2 $psipreddir/data/weights_p2.dat 1 1.0 1.0 $tempdir/$prefix.ss2 $tempdir/$jobid.ss > /dev/null") != 0)
+  {
+    die("CONSIP3 ERROR 07 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
+  if (system("$metadir/bin/solvpred $tempdir/$jobid.mtx $metadir/data/weights_solv.dat > $tempdir/$prefix.solv") != 0)
+  {
+    die("CONSIP3 ERROR 08 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
+  if (system("$metadir/bin/alnstats $tempdir/$prefix.aln $tempdir/$prefix.colstats $tempdir/$prefix.pairstats > /dev/null") != 0)
+  {
+    die("CONSIP3 ERROR 09 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
+  $naln = `cat $tempdir/$prefix.aln | wc -l`;
+  print("Running: Making contact predictions\n");
+  if ($naln >= 10)
+  {
+    $psicovret = system("timeout 86400 $psicovdir/bin/psicov -z 6 -o -d 0.03 $tempdir/$prefix.aln > $tempdir/$prefix.psicov 2>&1");
 
-$metabindir/metapsicovhb $target.colstats $target.metapsicov.stage1 $target.ss2 $target.solv $metadatadir/weights_hbpass2.dat | sort -n -r -k 5 > $target.metapsicov.hb
+    if ($psicovret != 0 && $psicovret >> 8 != 124)
+    {
+      die("CONSIP3 ERROR 10 ($psicovret) - please report error to psipred\@cs.ucl.ac.uk\n");
+      exit 0;
+    }
+    $ccmret = system("timeout 86400 $ccmpreddir/bin/ccmpred -t 6 $tempdir/$prefix.aln $tempdir/$prefix.ccmpred > /dev/null 2>&1");
+    if ($ccmret != 0 && $ccmret >> 8 != 124)
+    {
+      die("CONSIP3 ERROR 11 ($ccmret) - please report error to psipred\@cs.ucl.ac.uk\n");
+      exit 0;
+    }
 
-echo "Output files: " $target.metapsicov.stage1 $target.metapsicov.stage2 $target.metapsicov.hb
+    if (system("$freecontactdir/src/freecontact -a 8 < $tempdir/$prefix.aln > $tempdir/$prefix.evfold") != 0)
+    {
+      die("CONSIP3 ERROR 12 - please report error to psipred\@cs.ucl.ac.uk\n", $email);
+      exit 0;
+    }
+  }
+  #exit 0;
+  print("Running: meta-prediction\n");
+  if (system("touch $tempdir/$prefix.psicov $tempdir/$prefix.evfold $tempdir/$prefix.ccmpred") != 0)
+  {
+    die("CONSIP3 ERROR 13 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+    }
+
+  if (system("$metadir/bin/metapsicov $tempdir/$prefix.colstats $tempdir/$prefix.pairstats $tempdir/$prefix.psicov $tempdir/$prefix.evfold $tempdir/$prefix.ccmpred $tempdir/$prefix.ss2 $tempdir/$prefix.solv $metadir/data/weights_6A.dat $metadir/data/weights_65A.dat $metadir/data/weights_7A.dat $metadir/data/weights_75A.dat $metadir/data/weights_8A.dat $metadir/data/weights_85A.dat $metadir/data/weights_9A.dat $metadir/data/weights_10A.dat $metadir/data/weights_811A.dat $metadir/data/weights_1012A.dat > $tempdir/$prefix.metapsicov.stage1") != 0)
+  {
+    die("CONSIP3 ERROR 14 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
+
+  if (system("$metadir/bin/metapsicovp2 $tempdir/$prefix.colstats $tempdir/$prefix.metapsicov.stage1 $tempdir/$prefix.ss2 $tempdir/$prefix.solv $metadir/data/weights_pass2.dat | sort -n -r -k 5 | head -5000 > $tempdir/$prefix.metapsicov.stage2") != 0)
+  {
+    die("CONSIP3 ERROR 15 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+  }
+}
+
+$jobid = $ARGV[0];
+
+if(! -e $tempdir)
+{
+  die("tempdir $tempdir does not exist, please create.");
+}
+
+if (open(LOGF, ">>$tempdir/consip.log"))
+{
+    flock(LOGF, 2) or die;
+    $date = localtime;
+    print LOGF $date," : RUNNING $jobid\n";
+    close(LOGF);
+}
+
+
+# Check sequence still exists
+
+if (! -e "$tempdir/$jobid.fasta")
+{
+    die("Fasta file $jobid.fasta not in tempdir");
+    exit 0;
+}
+
+open(SEQFILE, "$tempdir/$jobid.fasta") or die;
+$seq = do { local $/; <SEQFILE> };
+$seq =~ s/>.*\n//;
+$seq =~ s/[^A-za-z]//g;
+close SEQFILE;
+
+$nres = length($seq);
+
+$masked = $seq;
+
+print("Running: initial hhblits\n");
+if(system("$hhdir/bin/hhblits -i $tempdir/$jobid.fasta -n 3 -e 0.001 -d $hhdb/pdb70 -cpu 4 -o $tempdir/$jobid.hhr > $tempdir/$jobid.pdbhhblog 2>&1") != 0)
+{
+    die("CONSIP3 ERROR PH1 - please report error to psipred\@cs.ucl.ac.uk\n");
+    exit 0;
+}
+
+open(HHRFILE, "$tempdir/$jobid.hhr") or die;
+
+while (<HHRFILE>)
+{
+  if (/^..[0-9] /)
+  {
+    @recs = split(' ', substr($_, 34));
+    if ($recs[0] >= 98.0)
+    {
+      @range = split('-', $recs[6]);
+	    #print $range[0]-1, "-", $range[1]-1, "\n";
+      for ($i = $range[0]-1; $i <= $range[1]-1; $i++)
+      {
+        substr($masked, $i, 1) = ' ';
+      }
+	    #print $range[0], " ", $range[1], "\n";
+    }
+  }
+  if (/^>/)
+  {
+    last;
+  }
+}
+# First run complete sequence
+&RunMetaPSICOV($jobid);
+
+open(S2FILE, "<$tempdir/$jobid.metapsicov.stage2") or die;
+while (<S2FILE>)
+{
+    @recs = split(' ');
+    $contacts[$recs[0]][$recs[1]] = $recs[4];
+}
+close S2FILE;
+
+# Now run detected domains (if any) that could not be matched to PDB templates
+while ($masked =~ /([A-Za-z]+)/g)
+{
+  $domlen = length($1);
+  $roffset = pos($masked) - $domlen;
+  $domseq = $1;
+
+  if (length($domseq) >= 30 && length($domseq) < $nres)
+  {
+    open(DOMSOUT, ">$tempdir/$jobid.$roffset.fasta") or die;
+    print DOMSOUT ">Domain$roffset\n$domseq\n";
+    close(DOMSOUT);
+
+    &RunMetaPSICOV("$jobid.$roffset");
+
+    # Erase any previously predicted contacts within this domain
+    for ($i=$roffset+1; $i<=$roffset+$domlen; $i++)
+    {
+      for ($j=$i+1; $j<=$roffset+$domlen; $j++)
+      {
+        $contacts[$i][$j] = 0.0;
+      }
+    }
+
+    # Copy in newly predicted contacts for this domain
+    open(S2FILE, "<$tempdir/$jobid.$roffset.metapsicov.stage2") or die;
+    while (<S2FILE>)
+    {
+      @recs = split(' ');
+      $contacts[$recs[0] + $roffset][$recs[1] + $roffset] = $recs[4];
+    }
+    close S2FILE;
+  }
+}
+
+open(S3FILE, ">$tempdir/$jobid.metapsicov.stage3") or die;
+for ($i=1; $i<=$nres; $i++)
+{
+  for ($j=$i+5; $j<=$nres; $j++)
+  {
+    $prob = $contacts[$i][$j];
+    if ($prob > 0.0)
+    {
+      print S3FILE "$i $j 0 8 $prob\n";
+    }
+  }
+}
+close S3FILE;
+
+# $message = "PFRMAT RR\nTARGET " . $subject . "\nAUTHOR MetaPSICOV\nMODEL 1\n";
+# $subjectline = $subject . " MetaPSICOV Results";
+# open(MAILOUT, "| /usr/bin/Mail -s '$subjectline' $email") or die;
+# print MAILOUT $message;
+#
+# $Text::Wrap::columns = 50;
+# open(SEQFILE, "$tempdir/$jobid.fasta");
+# <SEQFILE>;
+# print MAILOUT Text::Wrap::fill( '', '', join '', <SEQFILE>);
+# close SEQFILE;
+# print MAILOUT "\n";
+#
+# $results = `cat $tempdir/$jobid.metapsicov.stage3 | sort -n -r -k 5 | head -5000`;
+# print MAILOUT $results, "END\n";
+#
+# close(MAILOUT);
+#
+# if (open(LOGF, ">>/var/www/tmp/consip.log")) {
+#     flock(LOGF, 2) or die;
+#     $date = localtime;
+#     print LOGF $date," : COMPLETED $jobid\n";
+#     close(LOGF);
+# }
+
+exit 0;

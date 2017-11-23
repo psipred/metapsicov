@@ -1,0 +1,77 @@
+BLASTP 2.2.26 [Sep-21-2011]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+
+Reference for compositional score matrix adjustment: Altschul, Stephen F., 
+John C. Wootton, E. Michael Gertz, Richa Agarwala, Aleksandr Morgulis,
+Alejandro A. Schaffer, and Yi-Kuo Yu (2005) "Protein database searches
+using compositionally adjusted substitution matrices", FEBS J. 272:5101-5109.
+
+
+Reference for composition-based statistics starting in round 2:
+Schaffer, Alejandro A., L. Aravind, Thomas L. Madden,
+Sergei Shavirin, John L. Spouge, Yuri I. Wolf,  
+Eugene V. Koonin, and Stephen F. Altschul (2001), 
+"Improving the accuracy of PSI-BLAST protein database searches with 
+composition-based statistics and other refinements",  Nucleic Acids Res. 29:2994-3005.
+
+Query= 5PTPA Sequence from PDB ATOM records
+         (222 letters)
+
+Database: uniref_test.fasta 
+           2521 sequences; 969,502 total letters
+
+Searching..................................................done
+
+
+
+ ***** No hits found ******
+
+Searching..................................................done
+
+
+
+ ***** No hits found ******
+
+  Database: uniref_test.fasta
+    Posted date:  Feb 5, 2016  11:48 AM
+  Number of letters in database: 969,502
+  Number of sequences in database:  2521
+  
+Lambda     K      H
+   0.314    0.130    0.403 
+
+Lambda     K      H
+   0.267   0.0403    0.140 
+
+
+Matrix: BLOSUM62
+Gap Penalties: Existence: 11, Extension: 1
+Number of Hits to DB: 886,168
+Number of Sequences: 2521
+Number of extensions: 36095
+Number of successful extensions: 68
+Number of sequences better than 1.0e-03: 0
+Number of HSP's better than  0.0 without gapping: 0
+Number of HSP's successfully gapped in prelim test: 0
+Number of HSP's that attempted gapping in prelim test: 68
+Number of HSP's gapped (non-prelim): 0
+length of query: 222
+length of database: 969,502
+effective HSP length: 79
+effective length of query: 143
+effective length of database: 770,343
+effective search space: 110159049
+effective search space used: 110159049
+T: 11
+A: 40
+X1: 16 ( 7.3 bits)
+X2: 38 (14.6 bits)
+X3: 64 (24.7 bits)
+S1: 42 (22.0 bits)
+S2: 84 (37.0 bits)
