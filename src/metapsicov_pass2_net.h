@@ -4,8 +4,8 @@
 #define WINR (5)
 
 #define NUM_IN	(2*(WINR-WINL+1)*IPERGRP+(WINR-WINL+1)*(WINR-WINL+1)+16)	/* number of input units */
-#define NUM_HID (55)			/* number of hidden units */
-#define NUM_OUT (1) 			/* number of output units */
+#define NUM_HID (100)			/* number of hidden units */
+#define NUM_OUT (2) 			/* number of output units */
 
 #define TOTAL		(NUM_IN + NUM_HID + NUM_OUT)
 

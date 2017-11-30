@@ -1,9 +1,9 @@
-/* METAPSICOV - Neural Network Meta-prediction of Residue Contacts */
+/* METAPSICOV2 - Neural Network Prediction of Contacts */
 
-/* Written by David T. Jones */
-
-/* Copyright (C) 2014 University College London - Created : January 2014 */
+/* Copyright (C) 2000 David T. Jones - Created : January 2000 */
 /* Original Neural Network code Copyright (C) 1990 David T. Jones */
+
+/* Average Prediction Module */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,12 +14,13 @@
 
 #define MAXSEQLEN 5000
 
+/* Rectifier function */
+#define rectifier(x) ((x) < 0.0F ? 0.0F : (x))
+
 /* logistic 'squashing' function (+/- 1.0) */
 #define logistic(x) (1.0F / (1.0F + (float)exp(-(x))))
 
-#define MAX(x,y) ((x)>(y)?(x):(y))
-
-#include "metapsicov_net.h"
+#include "metapsicov_pass2_net.h"
 
 char           *wtfnm;
 
@@ -35,7 +36,7 @@ char seq[MAXSEQLEN];
 struct entry
 {
     char           *id, *seq, **contmap;
-    float         **mimat, **mipmat, **potmat, **psicov, **evfold, **ccmpred, *cprob, *hprob, *eprob, *entropy, *psolv, **profile, effnseq;
+    float         **metapsicov, *cprob, *hprob, *eprob, *entropy, *psolv, **profile, effnseq;
     float         *aacomp, cmean, hmean, emean, smean, entropmean;
     int           length, nseq;
 } target;
@@ -97,18 +98,28 @@ void           *allocvec(int columns, int size)
     return p;
 }
 
-void
-compute_output(void)
+void            compute_output()
 {
     int             i, j;
-    float           netinp;
+    float            netinp, *tp;
 
-    for (i = NUM_IN; i < TOTAL; i++)
+    for (i = NUM_IN; i < NUM_IN + NUM_HID; i++)
     {
 	netinp = bias[i];
+	tp = weight[i];
+	for (j = 0; j < NUM_IN; j++)
+	    netinp += activation[j] * tp[j];
 
-	for (j = fwt_to[i]; j < lwt_to[i]; j++)
-	    netinp += activation[j] * weight[i][j];
+	/* Trigger neuron */
+	activation[i] = rectifier(netinp);
+    }
+
+    for (i = NUM_IN + NUM_HID; i < TOTAL; i++)
+    {
+	netinp = bias[i];
+	tp = weight[i];
+	for (j = NUM_IN; j < NUM_IN + NUM_HID; j++)
+	    netinp += activation[j] * tp[j];
 
 	/* Trigger neuron */
 	activation[i] = logistic(netinp);
@@ -203,7 +214,7 @@ predict(int argc, char **argv)
 
     predsum = allocmat(target.length, target.length, sizeof(float));
 
-    for (ws=8; ws<argc; ws++)
+    for (ws=5; ws<argc; ws++)
     {
 	load_wts(argv[ws]);
 	
@@ -222,115 +233,67 @@ predict(int argc, char **argv)
 			activation[(j - WINL) * IPERGRP + 22] = target.hprob[j + winpos];
 			activation[(j - WINL) * IPERGRP + 23] = target.eprob[j + winpos];
 			activation[(j - WINL) * IPERGRP + 24] = target.psolv[j + winpos];
-			activation[(j - WINL) * IPERGRP + 25] = target.entropy[j + winpos];
-		    }
-		    else
-			activation[(j - WINL) * IPERGRP + 26] = 1.0;
-		
+		    activation[(j - WINL) * IPERGRP + 25] = target.entropy[j + winpos];
+		}
+		else
+		    activation[(j - WINL) * IPERGRP + 26] = 1.0;
+
 		for (j = WINL; j <= WINR; j++)
-		    if (j + winpos2 >= 0 && j + winpos2 < target.length)
+		    if (j + winpos >= 0 && j + winpos < target.length)
 		    {
 			for (aa = 0; aa < 21; aa++)
-			    activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + aa] = target.profile[j + winpos2][aa];
-			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 21] = target.cprob[j + winpos2];
-			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 22] = target.hprob[j + winpos2];
-			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 23] = target.eprob[j + winpos2];
-			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 24] = target.psolv[j + winpos2];
-			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 25] = target.entropy[j + winpos2];
+			    activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + aa] = target.profile[j + winpos][aa];
+			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 21] = target.cprob[j + winpos];
+			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 22] = target.hprob[j + winpos];
+			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 23] = target.eprob[j + winpos];
+			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 24] = target.psolv[j + winpos];
+			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 25] = target.entropy[j + winpos];
 		    }
 		    else
 			activation[(WINR-WINL+1) * IPERGRP + (j - WINL) * IPERGRP + 26] = 1.0;
-		
-		midpos = (winpos + winpos2) / 2;
-		
-		for (j = CWINL; j <= CWINR; j++)
-		    if (j + midpos >= 0 && j + midpos < target.length)
-		    {
-			for (aa = 0; aa < 21; aa++)
-			    activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + aa] = target.profile[j + midpos][aa];
-			activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + 21] = target.cprob[j + midpos];
-			activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + 22] = target.hprob[j + midpos];
-			activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + 23] = target.eprob[j + midpos];
-			activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + 24] = target.psolv[j + midpos];
-			activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + 25] = target.entropy[j + midpos];
-		    }
-		    else
-			activation[2*(WINR-WINL+1) * IPERGRP + (j - CWINL) * IPERGRP + 26] = 1.0;
-		
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP] = target.mimat[winpos][winpos2];
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP+1] = target.mipmat[winpos][winpos2];
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP+2] = target.potmat[winpos][winpos2];
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP+3] = target.psicov[winpos][winpos2];
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP+4] = target.evfold[winpos][winpos2];
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP+5] = target.ccmpred[winpos][winpos2];
+
+		for (i = WINL; i <= WINR; i++)
+		    for (j = WINL; j <= WINR; j++)
+			if (i + winpos >= 0 && i + winpos < target.length && j + winpos2 >= 0 && j + winpos2 < target.length)
+			    activation[2 * (WINR-WINL+1) * IPERGRP + (j-WINL) * (WINR-WINL+1) + i - WINL] = target.metapsicov[i + winpos][j + winpos2];
 		
 		seqsep = winpos2 - winpos;
 		
 		if (seqsep < 5)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 6] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1)] = 1.0;
 		else if (seqsep < 14)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 2 + seqsep] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + seqsep - 4] = 1.0;
 		else if (seqsep < 18)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 16] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 10] = 1.0;
 		else if (seqsep < 23)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 17] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 11] = 1.0;
 		else if (seqsep <= 28)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 18] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 12] = 1.0;
 		else if (seqsep <= 38)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 19] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 13] = 1.0;
 		else if (seqsep <= 48)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 20] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 14] = 1.0;
 		else
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 21] = 1.0;
+		    activation[2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 15] = 1.0;
 		
-		for (aa=0; aa<21; aa++)
-		    activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + aa] = target.aacomp[aa];
-		
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 21] = target.cmean;
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 22] = target.hmean;
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 23] = target.emean;
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 24] = target.smean;
-		
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 25] = log((double)target.length);
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 26] = log((double)target.nseq);
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 27] = log((double)target.effnseq);
-		activation[2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 28] = target.entropmean;
-		
-#if (2*(WINR-WINL+1) * IPERGRP + (CWINR-CWINL+1) * IPERGRP + 22 + 29) != NUM_IN
+#if (2*(WINR-WINL+1) * IPERGRP + (WINR-WINL+1) * (WINR-WINL+1) + 16) != NUM_IN
 #error "MISMATCHING NUMBER OF INPUTS!"
 #endif
 		
 		compute_output();
 		
-		predsum[winpos][winpos2] += activation[TOTAL - NUM_OUT];
+		predsum[winpos][winpos2] += activation[TOTAL - NUM_OUT + 1];
 	    }
     }
 
     for (winpos = 0; winpos < target.length; winpos++)
 	for (winpos2 = winpos+5; winpos2 < target.length; winpos2++)
 	{
-	    predsum[winpos][winpos2] /= (float)(argc - 8);
-	    
-	    x = predsum[winpos][winpos2];
-
-#if 0
-	    /* Transform to posterior prob by scaled log transform */
-
-#define A 3.6512190000514688E-01
-#define B 1.5491157018510503E+01
-#define C 9.8856650825604842E-01	    
-
-	    prob = A * log(B * x + C);
-	    
-	    if (prob < 0.001)
-		prob = 0.001;
-	    if (prob > 0.999)
-		prob = 0.999;
+	    predsum[winpos][winpos2] /= (float)(argc - 5);
+    
+	    prob = predsum[winpos][winpos2];
 
 	    printf("%d %d 0 8 %f\n", winpos+1, winpos2+1, prob);
-#else
-	    printf("%d %d 0 8 %f\n", winpos+1, winpos2+1, x);
-#endif
 	}
 }
 
@@ -370,7 +333,7 @@ int             getmtx(FILE *lfil)
 }
 
 /* Read in data */
-void            read_dat(char *colname, char *pairname, char *psiname, char *evfname, char *ccmpfname, char *ssname, char *solvname)
+void            read_dat(char *colname, char *psiname, char *ssname, char *solvname)
 {
     FILE           *ifp, *tfp, *cfp, *pfp, *sfp;
     char            buf[512];
@@ -447,29 +410,7 @@ void            read_dat(char *colname, char *pairname, char *psiname, char *evf
     
     target.entropmean = aventropy;
     
-    if (!(pfp = fopen(pairname, "r")))
-	fail("Cannot open pair stats file!");
-    
-    target.potmat = allocmat(nres, nres, sizeof(float));
-    target.mimat = allocmat(nres, nres, sizeof(float));
-    target.mipmat = allocmat(nres, nres, sizeof(float));
-    
-    for (k=0; k<npairs; k++)
-    {
-	if (!fgets(buf, 512, pfp))
-	    fail("Bad pair stats file!");
-	
-	if (sscanf(buf, "%d%d%f%f%f", &i, &j, &consv[0], &consv[1], &consv[2]) != 5)
-	    fail("Bad pair stats file!");
-	
-	target.potmat[i-1][j-1] = target.potmat[j-1][i-1] = consv[0];
-	target.mimat[i-1][j-1] = target.mimat[j-1][i-1] = consv[1];
-	target.mipmat[i-1][j-1] = target.mipmat[j-1][i-1] = consv[2];
-    }
-    
-    fclose(pfp);
-
-    target.psicov = allocmat(nres, nres, sizeof(float));
+    target.metapsicov = allocmat(nres, nres, sizeof(float));
     
     if ((pfp = fopen(psiname, "r")))
     {
@@ -478,50 +419,13 @@ void            read_dat(char *colname, char *pairname, char *psiname, char *evf
 	    if (!fgets(buf, 512, pfp))
 		break;
 	    
+	    if (! isdigit(buf[0]))
+		continue;
+	    
 	    if (sscanf(buf, "%d%d%*s%*s%f", &i, &j, &consv[0]) != 3)
-		fail("Bad PSICOV file!");
+		fail("Bad METAPSICOV file!");
 	    
-	    target.psicov[i-1][j-1] = target.psicov[j-1][i-1] = consv[0];
-	}
-    
-	fclose(pfp);
-    }
-    
-    target.evfold = allocmat(nres, nres, sizeof(float));
-    
-    if ((pfp = fopen(evfname, "r")))
-    {
-	for (;;)
-	{
-	    if (!fgets(buf, 512, pfp))
-		break;
-	    
-	    if (sscanf(buf, "%d%*s%d%*s%*s%f", &i, &j, &consv[0]) != 3)
-		fail("Bad evfold file!");
-	    
-	    target.evfold[i-1][j-1] = target.evfold[j-1][i-1] = consv[0];
-	}
-    
-	fclose(pfp);
-    }
-    
-    target.ccmpred = allocmat(nres, nres, sizeof(float));
-
-    if ((pfp = fopen(ccmpfname, "r")))
-    {
-	if (fscanf(pfp, "%f", &consv[0]) == 1)
-	{
-	    rewind(pfp);
-	    
-	    for (i=0; i<nres; i++)
-		for (j=0; j<nres; j++)
-		{
-		    if (fscanf(pfp, "%f", &consv[0]) != 1)
-			fail("Bad CCMPRED file!");
-		    
-		    /* NOTE: Reading full NxN matrix for CCMPRED! */
-		    target.ccmpred[i][j] = consv[0];
-		}
+	    target.metapsicov[i-1][j-1] = target.metapsicov[j-1][i-1] = consv[0];
 	}
     
 	fclose(pfp);
@@ -581,10 +485,10 @@ main(int argc, char **argv)
     FILE *ifp;
 
     /* malloc_debug(3); */
-    if (argc < 9)
-	fail("usage : metapsicov colstats-file pairstats-file psicov-file evfold-file ccmpred-file ss2-file solv-file weight-file1 ... weight-filen");
+    if (argc < 6)
+	fail("usage : psipred colstats-file metapsicov-file ss2-file solv-file weight-file1 ... weight-filen");
 
-    read_dat(argv[1], argv[2], argv[3], argv[4], argv[5], argv[6], argv[7]);
+    read_dat(argv[1], argv[2], argv[3], argv[4]);
 
     init();
 

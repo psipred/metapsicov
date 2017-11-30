@@ -22,11 +22,11 @@ clean:
 solvpred:	solvpred.c solvation_net.h
 		$(CC) $(CFLAGS) solvpred.c $(LIBS) -o solvpred
 
-metapsicov:	metapsicov.c metapsicov_net.h
-		$(CC) $(CFLAGS) metapsicov.c $(LIBS) -o metapsicov
+metapsicov:	metapsicov2_pred.c metapsicov2_net.h
+		$(CC) $(CFLAGS) metapsicov2_pred.c $(LIBS) -o metapsicov
 
-metapsicovp2:	metapsicovp2.c metapsicov_pass2_net.h
-		$(CC) $(CFLAGS) metapsicovp2.c $(LIBS) -o metapsicovp2
+metapsicovp2:	metapsicov_pass2_pred.c metapsicov_pass2_net.h
+		$(CC) $(CFLAGS) metapsicov_pass2_pred.c $(LIBS) -o metapsicovp2
 
 metapsicovhb:	metapsicovhb.c metapsicov_pass2_net.h
 		$(CC) $(CFLAGS) metapsicovhb.c $(LIBS) -o metapsicovhb
