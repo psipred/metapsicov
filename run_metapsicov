@@ -75,7 +75,7 @@ sub RunMetaPSICOV
     print("Running: jack_hhblits\n");
     # Try to find more sequences via jackhmmer/UNIREF100
     #print("$bindir/jack_hhblits $prefix $bindir $tempdir $uniref100 > $tempdir/$prefix.jacklog");
-    if(system("$bindir/jack_hhblits $prefix $bindir $tempdir $uniref100 > $tempdir/$prefix.jacklog") != 0)
+    if(system("$bindir/jack_hhblits $prefix $bindir $tempdir $uniref100 4 > $tempdir/$prefix.jacklog") != 0)
     {
       die("CONSIP3 ERROR 05 - please report error to psipred\@cs.ucl.ac.uk\n");
       exit 0;

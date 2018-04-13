@@ -6,6 +6,7 @@ set jobid = $1
 set bindir = $2
 set tmpdir = $3
 set db = $4
+set cpu = $5
 set jackhmmer = '/opt/Applications/hmmer-3.1b2' #location of HMMER binaries
 set hhdir = '/opt/Applications/hh-suite/' #location of HH-sutie
 
@@ -52,7 +53,7 @@ if ($status) then
    exit 1
 endif
 
-perl $hhdir/scripts/hhblitsdb.pl -cpu 4 -o $jobid-mydb/mydb -ia3m $jobid-mya3m > /dev/null
+perl $hhdir/scripts/hhblitsdb.pl -cpu $cpu -o $jobid-mydb/mydb -ia3m $jobid-mya3m > /dev/null
 
 if ($status) then
    exit 1
