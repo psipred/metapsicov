@@ -10,15 +10,22 @@ set cpu = $5
 set jackhmmer = '/opt/Applications/hmmer-3.1b2' #location of HMMER binaries
 set hhdir = '/opt/Applications/hh-suite/' #location of HH-sutie
 
+echo "Setting path"
 setenv PATH "$PATH":$bindir
+setenv PATH "$PATH":$hhdir"/bin"
+setenv HHLIB $hhdir
+echo $PATH
+echo $HHLIB
 
+echo "changing dir"
 cd $tmpdir
 
 if ($status) then
    exit 1
 endif
 
-$jackhmmer/src/jackhmmer --cpu 4 -N 3 -E 10 --incE 1e-3 --noali --tblout $jobid.tbl $jobid.fasta $db
+echo 'running jackhmmer'
+$jackhmmer/src/jackhmmer --cpu $cpu -N 3 -E 10 --incE 1e-3 --noali --tblout $jobid.tbl $jobid.fasta $db
 
 if ($status) then
    exit 1
@@ -30,37 +37,47 @@ if ($status) then
    exit 1
 endif
 
+echo 'making custom db dirs'
 cat $jobid.fasta >> $jobid.fseqs
 
 mkdir -p $jobid-mya3m
 mkdir -p $jobid-mydb
 
-cd $jobid-mya3m
+cd $tmpdir/$jobid-mya3m
 
 if ($status) then
    exit 1
 endif
 
+echo 'splitting fseqs'
 $bindir/fasta2a3msplit < $tmpdir/$jobid.fseqs
 
 if ($status) then
    exit 1
 endif
 
-cd ..
+cd $tmpdir
 
 if ($status) then
    exit 1
 endif
 
-perl $hhdir/scripts/hhblitsdb.pl -cpu $cpu -o $jobid-mydb/mydb -ia3m $jobid-mya3m > /dev/null
+echo 'building hhblits db'
+perl $hhdir/scripts/hhblitsdb.pl -cpu $cpu -o $jobid-mydb/mydb -ia3m $jobid-mya3m -log hhblitsdb.log
+# This is the start of getting this working for hh-suite 3 see page 16 hhsuite manual
+#
+# export HHLIB=/scratch0/NOT_BACKED_UP/dbuchan/Applications/hh-suite-3/
+# /scratch0/NOT_BACKED_UP/dbuchan/Applications/hh-suite-3/bin/ffindex_from_fasta -s fbe1b3b4-3f22-11e8-8a27-989096c13ee6.ff{data,index} fbe1b3b4-3f22-11e8-8a27-989096c13ee6.fseqs
+# mpirun -np 4 /scratch0/NOT_BACKED_UP/dbuchan/Applications/hh-suite-3/bin/ffindex_apply_mpi fbe1b3b4-3f22-11e8-8a27-989096c13ee6.ff{data,index} -i fbe1b3b4-3f22-11e8-8a27-989096c13ee6._a3m_wo_ss.ffindex -d fbe1b3b4-3f22-11e8-8a27-989096c13ee6_a3m_wo_ss.ffdata -- /scratch0/NOT_BACKED_UP/dbuchan/Applications/hh-suite-3/bin/hhblits -d /scratch1/NOT_BACKED_UP/dbuchan/hhblitsdb/uniclust30_2017_10/uniclust30_2017_10 -i stdin -oa3m stdout -n 2 -cpu 1 -v 0
+
 
 if ($status) then
    exit 1
 endif
 
+echo 'running hhblits'
 # NOTE - assumes that $jobid.a3m is already there!
-$hhdir/bin/hhblits -i $jobid.a3m -d $jobid-mydb/mydb -oa3m $jobid.a3m -e 1e-3 -n 3 -cpu 4 -diff inf -id 99 -cov 50
+$hhdir/bin/hhblits -i $jobid.a3m -d $jobid-mydb/mydb -oa3m $jobid.a3m -e 1e-3 -n 3 -cpu $cpu -diff inf -id 99 -cov 50
 
 if ($status) then
    exit 1

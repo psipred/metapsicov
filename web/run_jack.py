@@ -29,9 +29,15 @@ def run_exe(args, name):
     code = 0
     print("Running "+name)
     try:
-        code = subprocess.call(' '.join(args), shell=True)
+        print(' '.join(args))
+        code = subprocess.call(' '.join(args), shell=True,
+                               env={"PATH": os.environ.get('PATH')+":"+args[2],
+                                    "HHLIB": os.environ.get('HHLIB'),
+                                    }
+                               )
     except Exception as e:
-        print(str(e))
+        print('type is:', e.__class__.__name__)
+        print("Call Error "+str(e))
         sys.exit(1)
     if code != 0:
         print(name+" Non Zero Exit status: "+str(code))
@@ -44,14 +50,16 @@ if hhaln_length < 3000:
     bin_dir = os.path.dirname(os.path.realpath(sys.argv[0]))[:-3] + \
               "bin/"
     jackhhblits = bin_dir+"jack_hhblits"
-    tmpdir = sys.argv[2]+file_id+"/"
+    tmpdir = sys.argv[2]+"/"
     processJackhhblits_args = [jackhhblits,
                                file_id,
                                bin_dir,
                                tmpdir,
                                sys.argv[3],
-                               '1',
+                               '4',
+                               # '12'
                                ]
+    # print(processJackhhblits_args)
     run_exe(processJackhhblits_args, "jackhhblits")
 else:
     print(file_id)
