@@ -8,6 +8,7 @@ import subprocess
 # sys.argv[4] ccmpred path
 # sys.argv[4] ccmpred output file
 
+
 def file_len(fname):
     with open(fname) as f:
         i = None
@@ -19,7 +20,7 @@ def file_len(fname):
             return 0
 
 
-def run_exe(args, name):
+def run_exe(args, name, outfile):
     """
         Function takes a list of command line args and executes the subprocess.
         Sensibly tries to catch some errors too!
@@ -27,11 +28,17 @@ def run_exe(args, name):
     code = 0
     print("Running "+name)
     try:
-        code = subprocess.call(' '.join(args), shell=True)
+        print(' '.join(args))
+        code = subprocess.Popen(' '.join(args), shell=True, stdout=subprocess.PIPE)
+        out = code.communicate()[0]
+        if outfile:
+            output = open(outfile, "w")
+            output.write(out.decode())
+            output.close()
     except Exception as e:
         print(str(e))
         sys.exit(1)
-    if code != 0:
+    if code.returncode != 0:
         print(name+" Non Zero Exit status: "+str(code))
         sys.exit(code)
 
@@ -46,20 +53,24 @@ if aln_length >= 10:
                           "-o",
                           "-d",
                           "0.03",
-                          sys.argv[1]
+                          sys.argv[1],
                           ]
-    run_exe(processPSICOV_args, "psicov")
+    run_exe(processPSICOV_args, "psicov", "/tmp/"+sys.argv[1][:-4]+"/"+sys.argv[1][:-4]+".psicov")
 
+    cwd = os.getcwd()
+    os.chdir(os.path.dirname(os.path.dirname(sys.argv[3])))
+    input_path = "/tmp/"+sys.argv[1][:-4]+"/"+sys.argv[1]
     processFreecontact_args = [sys.argv[3],
                                "<",
-                               sys.argv[1]
+                               input_path,
                                ]
-    run_exe(processFreecontact_args, "freecontact")
+    run_exe(processFreecontact_args, "freecontact", "/tmp/"+sys.argv[1][:-4]+"/"+sys.argv[1][:-4]+".evfold")
+    os.chdir(cwd)
 
-    processCcmpred_args = [sys.argv[4]
+    processCcmpred_args = [sys.argv[4],
                            "-t",
                            "24",
                            sys.argv[1],
                            sys.argv[5],
                            ]
-    run_exe(processCcmpred_args, "ccmpred")
+    run_exe(processCcmpred_args, "ccmpred", None)

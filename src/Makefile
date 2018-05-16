@@ -7,9 +7,10 @@
 
 INCDIR		= .
 CC		= cc
-
+CPP             = g++
 CFLAGS		= -O
 LIBS		= -lm
+GD              = -lgd
 
 all:		metapsicov metapsicovp2 metapsicovhb alnstats solvpred plotmap
 
