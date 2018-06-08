@@ -6,7 +6,8 @@ import subprocess
 # sys.argv[2] psicov path
 # sys.argv[3] freecontac path
 # sys.argv[4] ccmpred path
-# sys.argv[4] ccmpred output file
+# sys.argv[5] ccmpred output file
+# sys.argv[6] tmpdir
 
 
 def file_len(fname):
@@ -55,7 +56,7 @@ if aln_length >= 10:
                           "0.03",
                           sys.argv[1],
                           ]
-    run_exe(processPSICOV_args, "psicov", "/tmp/"+sys.argv[1][:-4]+"/"+sys.argv[1][:-4]+".psicov")
+    run_exe(processPSICOV_args, "psicov", sys.argv[6]+"/"+sys.argv[1][:-4]+".psicov")
 
     cwd = os.getcwd()
     os.chdir(os.path.dirname(os.path.dirname(sys.argv[3])))
@@ -64,7 +65,7 @@ if aln_length >= 10:
                                "<",
                                input_path,
                                ]
-    run_exe(processFreecontact_args, "freecontact", "/tmp/"+sys.argv[1][:-4]+"/"+sys.argv[1][:-4]+".evfold")
+    run_exe(processFreecontact_args, "freecontact", sys.argv[6]+"/"+sys.argv[1][:-4]+".evfold")
     os.chdir(cwd)
 
     processCcmpred_args = [sys.argv[4],

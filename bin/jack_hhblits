@@ -8,7 +8,7 @@ set tmpdir = $3
 set db = $4
 set cpu = $5
 set jackhmmer = '/opt/Applications/hmmer-3.1b2' #location of HMMER binaries
-set hhdir = '/opt/Applications/hh-suite/' #location of HH-sutie
+set hhdir = '/opt/hhsuite-2.0.16' #location of HH-sutie
 
 echo "Setting path"
 setenv PATH "$PATH":$bindir
