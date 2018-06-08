@@ -60,7 +60,7 @@ if aln_length >= 10:
 
     cwd = os.getcwd()
     os.chdir(os.path.dirname(os.path.dirname(sys.argv[3])))
-    input_path = "/tmp/"+sys.argv[1][:-4]+"/"+sys.argv[1]
+    input_path = sys.argv[6]+"/"+sys.argv[1]
     processFreecontact_args = [sys.argv[3],
                                "<",
                                input_path,
