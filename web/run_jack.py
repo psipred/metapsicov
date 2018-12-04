@@ -61,8 +61,9 @@ if hhaln_length < 3000:
                                '4',
                                # '12'
                                ]
-    # print(processJackhhblits_args)
+    print(processJackhhblits_args)
     run_exe(processJackhhblits_args, "jackhhblits")
+    print("Complete jack_hhblits")
 else:
     print(file_id)
     f = open(file_id+".jackaln", "w")
