@@ -27,6 +27,8 @@ def run_exe(args, name):
         Sensibly tries to catch some errors too!
     """
     code = 0
+    print(args)
+    print(name)
     print("Running "+name)
     try:
         print(' '.join(args))
