@@ -27,8 +27,6 @@ def run_exe(args, name):
         Sensibly tries to catch some errors too!
     """
     code = 0
-    print(args)
-    print(name)
     print("Running "+name)
     try:
         print(' '.join(args))
@@ -61,7 +59,6 @@ if hhaln_length < 3000:
                                '4',
                                # '12'
                                ]
-    # print(processJackhhblits_args)
     run_exe(processJackhhblits_args, "jackhhblits")
     print("Complete jack_hhblits")
 else:
