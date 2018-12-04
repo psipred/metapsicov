@@ -28,17 +28,17 @@ def run_exe(args, name):
     """
     code = 0
     print("Running "+name)
-    try:
-        print(' '.join(args))
-        code = subprocess.call(' '.join(args), shell=True,
-                               env={"PATH": os.environ.get('PATH')+":"+args[2],
-                                    "HHLIB": os.environ.get('HHLIB'),
-                                    }
-                               )
-    except Exception as e:
-        print('type is:', e.__class__.__name__)
-        print("Call Error "+str(e))
-        sys.exit(1)
+    # try:
+    print(' '.join(args))
+    code = subprocess.call(' '.join(args), shell=True,
+                           env={"PATH": os.environ.get('PATH')+":"+args[2],
+                                "HHLIB": os.environ.get('HHLIB'),
+                                }
+                           )
+    # except Exception as e:
+    print('type is:', e.__class__.__name__)
+    print("Call Error "+str(e))
+    sys.exit(1)
     if code != 0:
         print(name+" Non Zero Exit status: "+str(code))
         sys.exit(code)
