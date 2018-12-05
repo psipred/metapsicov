@@ -57,7 +57,7 @@ if hhaln_length < 3000:
                                tmpdir,
                                sys.argv[3],
                                '4',
-                               # '12'
+                               'sing'
                                ]
     run_exe(processJackhhblits_args, "jackhhblits")
     print("Complete jack_hhblits")

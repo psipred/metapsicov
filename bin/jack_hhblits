@@ -7,6 +7,7 @@ set bindir = $2
 set tmpdir = $3
 set db = $4
 set cpu = $5
+set ending = $6
 set jackhmmer = '/opt/hmmer-3.1b2-linux-intel-x86_64/' #location of HMMER binaries
 set hhdir = '/opt/hhsuite-2.0.16-linux-x86_64/' #location of HH-sutie
 
@@ -25,7 +26,7 @@ if ($status) then
 endif
 
 echo 'running jackhmmer'
-$jackhmmer/src/jackhmmer --cpu $cpu -N 3 -E 10 --incE 1e-3 --noali --tblout $jobid.tbl $jobid.fasta $db
+$jackhmmer/src/jackhmmer --cpu $cpu -N 3 -E 10 --incE 1e-3 --noali --tblout $jobid.tbl $jobid.$6 $db
 
 if ($status) then
    exit 1
