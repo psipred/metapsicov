@@ -78,7 +78,7 @@ endif
 
 echo 'running hhblits'
 # NOTE - assumes that $jobid.a3m is already there!
-$hhdir/bin/hhblits -i $jobid.a3m20 -d $jobid-mydb/mydb -oa3m $jobid.a3m -e 1e-3 -n 3 -cpu $cpu -diff inf -id 99 -cov 50
+$hhdir/bin/hhblits -i $jobid.a3m -d $jobid-mydb/mydb -oa3m $jobid.a3m -e 1e-3 -n 3 -cpu $cpu -diff inf -id 99 -cov 50
 
 if ($status) then
    exit 1
