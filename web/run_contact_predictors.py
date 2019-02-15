@@ -49,7 +49,8 @@ file_id = sys.argv[1][:-6]
 if aln_length >= 10:
     print("Gonna run psicov and shizzle")
     processPSICOV_args = ["timeout",
-                          "86400",
+                          #"86400",
+                          "21600",
                           sys.argv[2],
                           "-o",
                           "-d",
