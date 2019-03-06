@@ -84,7 +84,7 @@ if ($status) then
    exit 1
 endif
 
-#\rm -rf $jobid-mya3m &
-#\rm -rf $jobid-mydb &
+rm -rf $jobid-mya3m &
+rm -rf $jobid-mydb &
 
 egrep -v "^>" $jobid.a3m | sed 's/[a-z]//g' > $jobid.jackaln
