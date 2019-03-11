@@ -79,3 +79,10 @@ if aln_length >= 10:
                            sys.argv[5],
                            ]
     run_exe(processCcmpred_args, "ccmpred", None)
+
+if not os.path.isfile(sys.argv[6]+"/"+sys.argv[1][:-4]+".psicov"):
+    open(sys.argv[6]+"/"+sys.argv[1][:-4]+".psicov", 'a').close()
+if not os.path.isfile(sys.argv[6]+"/"+sys.argv[1][:-4]+".evfold"):
+    open(sys.argv[6]+"/"+sys.argv[1][:-4]+".evfold", 'a').close()
+if not os.path.isfile(sys.argv[6]+"/"+sys.argv[1][:-4]+".ccmpred"):
+    open(sys.argv[6]+"/"+sys.argv[1][:-4]+".ccmpred", 'a').close()
