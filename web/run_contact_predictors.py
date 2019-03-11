@@ -72,7 +72,10 @@ if aln_length >= 10:
     run_exe(processFreecontact_args, "freecontact", sys.argv[6]+"/"+sys.argv[1][:-4]+".evfold")
     os.chdir(cwd)
 
-    processCcmpred_args = [sys.argv[4],
+    processCcmpred_args = ["timeout",
+                           #"86400",
+                           "7200",
+                           sys.argv[4],
                            "-t",
                            "24",
                            sys.argv[1],
