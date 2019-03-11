@@ -50,7 +50,7 @@ if aln_length >= 10:
     print("Gonna run psicov and shizzle")
     processPSICOV_args = ["timeout",
                           #"86400",
-                          "21600",
+                          "7200",
                           sys.argv[2],
                           "-o",
                           "-d",
@@ -62,7 +62,10 @@ if aln_length >= 10:
     cwd = os.getcwd()
     os.chdir(os.path.dirname(os.path.dirname(sys.argv[3])))
     input_path = sys.argv[6]+"/"+sys.argv[1]
-    processFreecontact_args = [sys.argv[3],
+    processFreecontact_args = ["timeout",
+                               #"86400",
+                               "7200",
+                               sys.argv[3],
                                "<",
                                input_path,
                                ]
