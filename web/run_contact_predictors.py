@@ -39,9 +39,9 @@ def run_exe(args, name, outfile):
     except Exception as e:
         print(str(e))
         sys.exit(1)
-    if code.returncode != 0:
-        print(name+" Non Zero Exit status: "+str(code))
-        sys.exit(code)
+    # if code.returncode != 0:
+    #     print(name+" Non Zero Exit status: "+str(code))
+    #     sys.exit(code)
 
 
 aln_length = file_len(sys.argv[1])
