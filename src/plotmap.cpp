@@ -12,7 +12,7 @@
 // gcc plotmap.c -lgd -o plotmap
 using namespace std;
 
-#define MAXSEQLEN 1000
+#define MAXSEQLEN 5000
 
 void usage(){
 
